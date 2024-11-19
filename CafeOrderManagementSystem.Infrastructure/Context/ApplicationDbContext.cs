@@ -31,6 +31,7 @@ namespace CafeOrderManagementSystem.Infrastructure.Context
                 entity.Property(mp => mp.ProductId)
                       .HasColumnName("ProductId");
             });
+
             builder.ApplyConfigurationsFromAssembly(typeof(DependencyInjection).Assembly);
         
         }
