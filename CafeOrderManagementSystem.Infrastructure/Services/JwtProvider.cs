@@ -1,4 +1,4 @@
-﻿using CafeOrderManagementSystem.Application.Features.User.Login;
+﻿using CafeOrderManagementSystem.Application.Features.UserFeature.Login;
 using CafeOrderManagementSystem.Application.Services;
 using CafeOrderManagementSystem.Domain.Entities;
 using CafeOrderManagementSystem.Infrastructure.Options;
@@ -16,7 +16,7 @@ namespace CafeOrderManagementSystem.Infrastructure.Services
         IRepository<User> userRepository,
         IOptions<JwtOptions> jwtOptions) : IJwtProvider
     {
-        public async Task<LoginCommandResponse> CreateToken(User user)
+        public async Task<LoginCommandResponse> CreateTokenAsync(User user)
         {
             List<Claim> claims = new()
             {
