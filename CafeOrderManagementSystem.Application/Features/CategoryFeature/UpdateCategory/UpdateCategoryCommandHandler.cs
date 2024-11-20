@@ -15,6 +15,7 @@ namespace CafeOrderManagementSystem.Application.Features.CategoryFeature.UpdateC
                 throw new Exception("Category not found");
 
             category.Name = request.Name;
+            category.UpdatedDate = DateTime.Now;
             repository.Update(category);
             await unitOfWork.SaveChangesAsync();
             return "Category updated successfully";

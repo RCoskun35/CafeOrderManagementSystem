@@ -17,7 +17,6 @@ namespace CafeOrderManagementSystem.Infrastructure
         {
             services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
             services.ConfigureOptions<JwtTokenOptionsSetup>();
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;

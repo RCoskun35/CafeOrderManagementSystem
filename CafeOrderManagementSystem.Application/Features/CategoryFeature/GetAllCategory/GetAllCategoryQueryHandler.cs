@@ -9,7 +9,7 @@ namespace CafeOrderManagementSystem.Application.Features.CategoryFeature.GetAllC
     {
         public async Task<List<Category>> Handle(GetAllCategoryQuery request, CancellationToken cancellationToken)
         {
-            return await repository.GetAll().ToListAsync();
+            return await repository.WhereWithTracking(x => !x.IsDeleted).ToListAsync();
         }
     }
 }

@@ -9,7 +9,6 @@ namespace CafeOrderManagementSystem.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(DependencyInjection).Assembly);
-
             services.AddMediatR(conf =>
             {
                 conf.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly);

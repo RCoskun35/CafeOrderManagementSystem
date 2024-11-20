@@ -12,7 +12,7 @@ using System.Text;
 
 namespace CafeOrderManagementSystem.Infrastructure.Services
 {
-    internal class JwtProvider(
+    public class JwtProvider(
         IRepository<User> userRepository,
         IOptions<JwtOptions> jwtOptions) : IJwtProvider
     {

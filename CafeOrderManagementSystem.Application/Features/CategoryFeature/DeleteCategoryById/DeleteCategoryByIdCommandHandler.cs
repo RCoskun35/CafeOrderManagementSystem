@@ -16,7 +16,9 @@ namespace CafeOrderManagementSystem.Application.Features.CategoryFeature.DeleteC
             if (category == null)
                 throw new Exception("Category not found");
 
-            repository.Delete(category);
+            category.IsDeleted = true;
+            category.DeletedDate = DateTime.Now;
+            repository.Update(category);
             await unitOfWork.SaveChangesAsync();
             return "Category deleted successfully";
         }

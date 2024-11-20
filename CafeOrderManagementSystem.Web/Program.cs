@@ -7,7 +7,9 @@ using CafeOrderManagementSystem.Infrastructure;
 using CafeOrderManagementSystem.Application.UserManagement;
 using CafeOrderManagementSystem.Web.Middlewares;
 using CafeOrderManagementSystem.Infrastructure.Services;
-using Microsoft.Extensions.DependencyInjection;
+using CafeOrderManagementSystem.Application.Services;
+
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 builder.Services.AddApplication();
@@ -22,7 +24,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 builder.Services.AddScoped<IUnitOfWork>(srv => srv.GetRequiredService<ApplicationDbContext>());
 builder.Services.AddInfrastructure(builder.Configuration);
-
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
