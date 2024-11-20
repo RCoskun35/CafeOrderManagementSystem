@@ -11,13 +11,13 @@ namespace CafeOrderManagementSystem.Application.Features.MenuFeature.Menu
     {
         public async Task<string> Handle(DeleteMenuByIdCommand request, CancellationToken cancellationToken)
         {
-            var Menu =await repository.GetByExpressionWithTrackingAsync(x=>x.Id == request.Id);
-            if (Menu == null)
+            var menu = await repository.GetByExpressionWithTrackingAsync(x=>x.Id == request.Id);
+            if (menu == null)
                 throw new Exception("Menu not found");
 
-            Menu.IsDeleted = true;
-            Menu.DeletedDate = DateTime.Now;
-            repository.Update(Menu);
+            menu.IsDeleted = true;
+            menu.DeletedDate = DateTime.Now;
+            repository.Update(menu);
             await unitOfWork.SaveChangesAsync();
             return "Menu deleted successfully";
         }

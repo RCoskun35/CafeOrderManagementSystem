@@ -9,13 +9,13 @@ namespace CafeOrderManagementSystem.Application.Features.MenuFeature.UpdateMenu
     {
         public async Task<string> Handle(UpdateMenuCommand request, CancellationToken cancellationToken)
         {
-            var Menu = await repository.GetByExpressionAsync(x => x.Id == request.Id);
-            if (Menu == null)
+            var menu = await repository.GetByExpressionAsync(x => x.Id == request.Id);
+            if (menu == null)
                 throw new Exception("Menu not found");
 
-            Menu.Name = request.Name;
-            Menu.UpdatedDate = DateTime.Now;
-            repository.Update(Menu);
+            menu.Name = request.Name;
+            menu.UpdatedDate = DateTime.Now;
+            repository.Update(menu);
             await unitOfWork.SaveChangesAsync();
             return "Menu updated successfully";
         }
