@@ -1,9 +1,11 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace CafeOrderManagementSystem.Web.Controllers
 {
+    [Authorize]
     public class BaseController : Controller
     {
         public readonly IMediator _mediator;

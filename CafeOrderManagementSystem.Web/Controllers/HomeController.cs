@@ -1,17 +1,22 @@
 using System.Diagnostics;
+using CafeOrderManagementSystem.Application.UserManagement;
+using CafeOrderManagementSystem.Infrastructure.Services;
 using CafeOrderManagementSystem.Web.Models;
+using MediatR;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeOrderManagementSystem.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IMediator mediator,ILogger<HomeController> logger) : base(mediator)
         {
             _logger = logger;
         }
+
 
         public IActionResult Index()
         {

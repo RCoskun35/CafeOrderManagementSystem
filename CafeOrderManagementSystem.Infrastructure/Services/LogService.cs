@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System;
 using CafeOrderManagementSystem.Infrastructure.Context;
 using CafeOrderManagementSystem.Domain.Entities;
+using CafeOrderManagementSystem.Application.UserManagement;
 
 namespace CafeOrderManagementSystem.Infrastructure.Services
 {
@@ -22,23 +23,11 @@ namespace CafeOrderManagementSystem.Infrastructure.Services
 
         public static int UserId()
         {
-            int result = 0;
-
-            var token = _httpContextAccessor.HttpContext.Request.Cookies.Where(x => x.Key == "jwtToken").FirstOrDefault();
-            if (token.Value != null)
-            {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var jwtSecurityToken = tokenHandler.ReadJwtToken(token.Value);
-                var payload = jwtSecurityToken.Payload;
-                var userIdHash = payload["UserId"].ToString();
-                return Convert.ToInt32(HashService.Decrypt(userIdHash));
-
-            }
-            return result;
+            return CurrentUser.Id;
 
         }
 
-        public static async Task LogAsync(string? detail, string? error, int? userId = null)
+        public static void Log(string? detail, string? error=null, int? userId = null)
         {
             try
             {
@@ -56,7 +45,7 @@ namespace CafeOrderManagementSystem.Infrastructure.Services
                         Application = callingMethod?.DeclaringType?.FullName
                     };
                     dbContext.Logs.Add(log);
-                    await dbContext.SaveChangesAsync();
+                     dbContext.SaveChanges();
                 }
             }
             catch (Exception ex)

@@ -25,7 +25,10 @@ namespace CafeOrderManagementSystem.Infrastructure
             })
                     .AddCookie(options =>
  {
-     options.LoginPath = "/Login/Index";
+     options.Cookie.Name = "Cookies"; 
+     options.LoginPath = "/Account/Login"; 
+     options.LogoutPath = "/Account/Logout"; 
+     options.ExpireTimeSpan = TimeSpan.FromDays(7); 
  })
                     .AddJwtBearer(options =>
  {
