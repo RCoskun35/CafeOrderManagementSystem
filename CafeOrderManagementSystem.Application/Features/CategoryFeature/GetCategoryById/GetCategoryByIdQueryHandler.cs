@@ -8,7 +8,7 @@ namespace CafeOrderManagementSystem.Application.Features.CategoryFeature.GetCate
     {
         public async Task<Category> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
         {
-            return await repository.GetByExpressionWithTrackingAsync(x => x.Id == request.Id);
+            return await repository.GetByExpressionWithTrackingAsync(x => x.Id == request.Id, cancellationToken);
         }
     }
 

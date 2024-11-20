@@ -12,11 +12,11 @@ namespace CafeOrderManagementSystem.Application.MenuProductFeature.DeleteMenuPro
     {
         public async Task<string> Handle(DeleteMenuProductByMenuIdAndProductIdCommand request, CancellationToken cancellationToken)
         {
-            var menuProduct = await repository.GetByExpressionWithTrackingAsync(x=>x.MenuId == request.MenuId && x.ProductId==request.ProductId);
+            var menuProduct = await repository.GetByExpressionWithTrackingAsync(x=>x.MenuId == request.MenuId && x.ProductId==request.ProductId, cancellationToken);
             if (menuProduct == null)
                 throw new Exception("MenuProduct not found");
             repository.Delete(menuProduct);
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return "MenuProduct deleted successfully";
         }
     }

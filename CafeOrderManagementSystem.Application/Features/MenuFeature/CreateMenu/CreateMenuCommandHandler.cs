@@ -12,12 +12,12 @@ namespace CafeOrderManagementSystem.Application.Features.MenuFeature.CreateMenu
     {
         public async Task<string> Handle(CreateMenuCommand request, CancellationToken cancellationToken)
         {
-            var isExistMenu = await repository.GetByExpressionWithTrackingAsync(x => x.Name == request.Name);
+            var isExistMenu = await repository.GetByExpressionWithTrackingAsync(x => x.Name == request.Name, cancellationToken);
             if (isExistMenu != null)
                 throw new Exception("Menu already exist");
             var menu = mapper.Map<Domain.Entities.Menu>(request);
-            await repository.AddAsync(menu);
-            await unitOfWork.SaveChangesAsync();
+            await repository.AddAsync(menu, cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return menu.Name;
         }
     }

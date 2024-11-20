@@ -2,6 +2,7 @@
 using GenericRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Reflection.Emit;
 
 namespace CafeOrderManagementSystem.Infrastructure.Context
 {
@@ -31,6 +32,9 @@ namespace CafeOrderManagementSystem.Infrastructure.Context
                 entity.Property(mp => mp.ProductId)
                       .HasColumnName("ProductId");
             });
+            builder.Entity<Order>()
+                .Ignore(o => o.TotalAmount);
+
 
             builder.ApplyConfigurationsFromAssembly(typeof(DependencyInjection).Assembly);
         

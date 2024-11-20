@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CafeOrderManagementSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241119203044_Init1")]
+    [Migration("20241120194823_Init1")]
     partial class Init1
     {
         /// <inheritdoc />
@@ -372,13 +372,13 @@ namespace CafeOrderManagementSystem.Infrastructure.Migrations
             modelBuilder.Entity("CafeOrderManagementSystem.Domain.Entities.MenuProduct", b =>
                 {
                     b.HasOne("CafeOrderManagementSystem.Domain.Entities.Menu", "Menu")
-                        .WithMany("MenuProducts")
+                        .WithMany()
                         .HasForeignKey("MenuId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CafeOrderManagementSystem.Domain.Entities.Product", "Product")
-                        .WithMany("MenuProducts")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -438,7 +438,7 @@ namespace CafeOrderManagementSystem.Infrastructure.Migrations
             modelBuilder.Entity("CafeOrderManagementSystem.Domain.Entities.Product", b =>
                 {
                     b.HasOne("CafeOrderManagementSystem.Domain.Entities.Category", "Category")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -446,24 +446,9 @@ namespace CafeOrderManagementSystem.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("CafeOrderManagementSystem.Domain.Entities.Category", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("CafeOrderManagementSystem.Domain.Entities.Menu", b =>
-                {
-                    b.Navigation("MenuProducts");
-                });
-
             modelBuilder.Entity("CafeOrderManagementSystem.Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderDetails");
-                });
-
-            modelBuilder.Entity("CafeOrderManagementSystem.Domain.Entities.Product", b =>
-                {
-                    b.Navigation("MenuProducts");
                 });
 
             modelBuilder.Entity("CafeOrderManagementSystem.Domain.Entities.Table", b =>

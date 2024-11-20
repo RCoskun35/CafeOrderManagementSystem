@@ -9,7 +9,7 @@ namespace CafeOrderManagementSystem.Application.Features.MenuFeature.GetAllMenu
     {
         public async Task<List<Domain.Entities.Menu>> Handle(GetAllMenuQuery request, CancellationToken cancellationToken)
         {
-            return await repository.WhereWithTracking(x => !x.IsDeleted).ToListAsync();
+            return await repository.WhereWithTracking(x => !x.IsDeleted).ToListAsync(cancellationToken);
         }
     }
 }

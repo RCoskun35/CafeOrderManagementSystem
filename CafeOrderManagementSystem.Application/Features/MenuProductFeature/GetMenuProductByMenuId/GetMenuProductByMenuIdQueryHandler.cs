@@ -10,7 +10,7 @@ namespace CafeOrderManagementSystem.Application.MenuProductFeature.GetMenuProduc
     {
         public async Task<List<MenuProduct>> Handle(GetMenuProductByMenuIdQuery request, CancellationToken cancellationToken)
         {
-            return await repository.WhereWithTracking(x => x.MenuId == request.MenuId).Include(a=>a.Menu).Include(b=>b.Product).ToListAsync();
+            return await repository.WhereWithTracking(x => x.MenuId == request.MenuId).Include(a=>a.Menu).Include(b=>b.Product).ToListAsync(cancellationToken);
         }
     }
 

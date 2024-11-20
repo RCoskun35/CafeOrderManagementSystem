@@ -10,14 +10,14 @@ namespace CafeOrderManagementSystem.Application.Features.CategoryFeature.UpdateC
     {
         public async Task<string> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = await repository.GetByExpressionAsync(x => x.Id == request.Id);
+            var category = await repository.GetByExpressionAsync(x => x.Id == request.Id, cancellationToken);
             if (category == null)
                 throw new Exception("Category not found");
 
             category.Name = request.Name;
             category.UpdatedDate = DateTime.Now;
             repository.Update(category);
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return "Category updated successfully";
         }
     }

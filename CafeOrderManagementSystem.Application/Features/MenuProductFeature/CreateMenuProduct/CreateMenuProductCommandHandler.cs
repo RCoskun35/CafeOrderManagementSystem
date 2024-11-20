@@ -12,7 +12,7 @@ namespace CafeOrderManagementSystem.Application.Features.MenuProductFeature.Crea
     {
         public async Task<string> Handle(CreateMenuProductCommand request, CancellationToken cancellationToken)
         {
-            var isExistmenuProduct = await repository.GetByExpressionWithTrackingAsync(x => x.MenuId == request.MenuId && x.ProductId == request.ProductId);
+            var isExistmenuProduct = await repository.GetByExpressionWithTrackingAsync(x => x.MenuId == request.MenuId && x.ProductId == request.ProductId, cancellationToken);
             if (isExistmenuProduct != null)
                 throw new Exception("Menu-Product already exist");
             var menuProduct = new MenuProduct
@@ -20,8 +20,8 @@ namespace CafeOrderManagementSystem.Application.Features.MenuProductFeature.Crea
                 MenuId = request.MenuId,
                 ProductId = request.ProductId
             };
-            await repository.AddAsync(menuProduct);
-            await unitOfWork.SaveChangesAsync();
+            await repository.AddAsync(menuProduct, cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return "Menu-Product added successfully";
         }
     }

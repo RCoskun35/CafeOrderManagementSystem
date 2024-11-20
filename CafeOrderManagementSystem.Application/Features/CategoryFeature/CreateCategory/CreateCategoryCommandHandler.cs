@@ -17,8 +17,8 @@ namespace CafeOrderManagementSystem.Application.Features.CategoryFeature.CreateC
             if (isExistCategory != null)
                 throw new Exception("Category already exist");
             var category = mapper.Map<Category>(request);
-            await repository.AddAsync(category);
-            await unitOfWork.SaveChangesAsync();
+            await repository.AddAsync(category,cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return category.Name;
         }
     }
