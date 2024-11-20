@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CafeOrderManagementSystem.Application.Features.CategoryFeature.CreateCategory;
+using CafeOrderManagementSystem.Application.Features.MenuFeature.CreateMenu;
 using CafeOrderManagementSystem.Domain.Entities;
 
 namespace CafeOrderManagementSystem.Application.Mapping
@@ -9,7 +10,8 @@ namespace CafeOrderManagementSystem.Application.Mapping
         public MappingProfile()
         {
             CreateMap<CreateCategoryCommand,Category>();
-            //CreateMap<AdminCreateOrderCommand, Order>();
+            CreateMap<CreateMenuCommand,Menu>();
+            
 
 
         }
