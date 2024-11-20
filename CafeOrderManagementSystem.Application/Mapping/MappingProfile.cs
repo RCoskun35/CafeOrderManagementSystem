@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CafeOrderManagementSystem.Application.Features.CategoryFeature.CreateCategory;
 using CafeOrderManagementSystem.Application.Features.MenuFeature.CreateMenu;
+using CafeOrderManagementSystem.Application.Features.ProductFeature.CreateProduct;
 using CafeOrderManagementSystem.Application.Features.TableFeature.CreateTable;
 using CafeOrderManagementSystem.Domain.Entities;
 
@@ -13,6 +14,7 @@ namespace CafeOrderManagementSystem.Application.Mapping
             CreateMap<CreateCategoryCommand,Category>();
             CreateMap<CreateMenuCommand,Menu>();
             CreateMap<CreateTableCommand,Table>();
+            CreateMap<CreateProductCommand,Product>();
 
 
 

@@ -27,7 +27,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(); 
 
 var app = builder.Build();
 
