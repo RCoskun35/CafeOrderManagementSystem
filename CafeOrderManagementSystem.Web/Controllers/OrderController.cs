@@ -1,4 +1,5 @@
 ﻿using CafeOrderManagementSystem.Application.Features.OrderFeature.AddOrderDetail;
+using CafeOrderManagementSystem.Application.Features.OrderFeature.CloseOrder;
 using CafeOrderManagementSystem.Application.Features.OrderFeature.CreateOrder;
 using CafeOrderManagementSystem.Application.Features.OrderFeature.GetAllOrder;
 using CafeOrderManagementSystem.Application.Features.OrderFeature.GetOrderById;
@@ -40,6 +41,11 @@ namespace CafeOrderManagementSystem.Web.Controllers
 
         [HttpPost]
         public async Task<IActionResult> RemoveOrderDetail([FromBody] RemoveOrderDetailCommand request, CancellationToken cancellationToken)
+        {
+            return await HandleRequestAsync(request, cancellationToken);
+        }
+        [HttpPost]
+        public async Task<IActionResult> CloseOrder([FromBody] CloseOrderCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }

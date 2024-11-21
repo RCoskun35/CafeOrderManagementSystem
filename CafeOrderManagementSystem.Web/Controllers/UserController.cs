@@ -17,7 +17,7 @@ namespace CafeOrderManagementSystem.Web.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> GetById([FromBody] RegisterCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Register([FromBody] RegisterCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }

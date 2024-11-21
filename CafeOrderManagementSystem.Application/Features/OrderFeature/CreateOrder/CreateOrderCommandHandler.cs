@@ -10,6 +10,7 @@ namespace CafeOrderManagementSystem.Application.Features.OrderFeature.CreateOrde
             IRepository<Order> repository,
             IRepository<OrderDetail> orderDetailRepository,
             IRepository<Product> productRepository,
+            IRepository<Table> tableRepository,
             IUnitOfWork unitOfWork
         ) : IRequestHandler<CreateOrderCommand, string>
     {
@@ -34,6 +35,11 @@ namespace CafeOrderManagementSystem.Application.Features.OrderFeature.CreateOrde
                 MenuId = x.MenuId,
                 UnitPrice = products.FirstOrDefault(a => a.Id == x.ProductId).Price * (x.MenuId.HasValue ? 0.9m : 1m)
             }).ToList();
+
+
+            var table = await tableRepository.Where(x => x.Id == request.TableId).FirstOrDefaultAsync(cancellationToken);
+            table!.State = 1;
+            tableRepository.Update(table);
 
             await orderDetailRepository.AddRangeAsync(orderDetails, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);

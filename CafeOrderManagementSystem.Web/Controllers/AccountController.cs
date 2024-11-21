@@ -14,7 +14,7 @@ namespace CafeOrderManagementSystem.Web.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Login(LoginCommand request)
+        public async Task<IActionResult> Login([FromBody] LoginCommand request)
         {
             try
             {
