@@ -1,8 +1,91 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<CafeOrderManagementSystem.Domain.Entities.Table>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div class="pagetitle">
+    <h1>Blank Page</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item">Pages</li>
+            <li class="breadcrumb-item active">Blank</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="section">
+    <div class="row">
+
+        @foreach (var table in Model)
+        {
+            <div class="col-lg-3" onclick="openDiv('@table.TableNumber')">
+                <div class="card mb-3" style="@(table.State == 0 ? "background-color: lightgreen;" : table.State == 1 ? "background-color: lightcoral;" : "background-color: peru;")">
+
+                    <div class="row g-0">
+                        <div class="col-md-4" style="padding: 10px;">
+                            <img src="assets/img/table.jpg" class="img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">@table.TableNumber-@(table.State == 0 ? "Boş" : table.State == 1 ? "Dolu" : "Rezerve")</h5>
+                                <p class="card-text">
+
+                                    @if (table.State == 0)
+                                    {
+                                        <button onclick="addOrder('@table.Id', event)" class="btn btn-outline-primary">Sipariş Al</button>
+                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-info mt-2">Rezervasyon Yap</button>
+                                    }
+
+                                   else @if (table.State == 1)
+                                    {
+                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-success">Sipariş Ekle</button>
+                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-primary mt-2">Masayı Kapat</button>
+                                    }
+                                    else @if (table.State == 2)
+                                    {
+                                        <button onclick="addOrder('@table.Id', event)" class="btn btn-primary">Sipariş Al</button>
+                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-success mt-2">Rezervasyon Sil</button>
+                                    }
+
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- End Card with an image on left -->
+            </div>
+        }
+
+
+
+    </div>
+</section>
+<script>
+        function openDiv(tableNumber) {
+        alert("Masa Numarası: " + tableNumber);
+    }
+    function addProductToOrder(tableId,event){
+        event.stopPropagation();
+    alert(tableId);
+    }
+    function addOrder(tableId,event){
+    event.stopPropagation();
+    const requestData = {
+         id: tableId
+     };
+     $.ajax({
+         url: '/Table/GetById', 
+         type: 'POST',
+         contentType: 'application/json',
+         data: JSON.stringify(requestData), 
+         success: function (response) {
+             
+             console.log("Masa bilgisi alındı:", response);
+         },
+         error: function (xhr, status, error) {
+             console.error("Hata oluştu:", error);
+             alert("Hata: " + error);
+         }
+     });
+    }
+</script>

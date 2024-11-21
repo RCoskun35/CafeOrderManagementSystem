@@ -2,6 +2,7 @@
 using CafeOrderManagementSystem.Application.UserManagement;
 using CafeOrderManagementSystem.Infrastructure.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeOrderManagementSystem.Web.Controllers
@@ -14,7 +15,8 @@ namespace CafeOrderManagementSystem.Web.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginCommand request)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(LoginCommand request)
         {
             try
             {

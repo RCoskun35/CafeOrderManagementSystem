@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTable;
 using CafeOrderManagementSystem.Application.UserManagement;
 using CafeOrderManagementSystem.Infrastructure.Services;
 using CafeOrderManagementSystem.Web.Models;
@@ -10,28 +11,18 @@ namespace CafeOrderManagementSystem.Web.Controllers
 {
     public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(IMediator mediator,ILogger<HomeController> logger) : base(mediator)
+        public HomeController(IMediator mediator) : base(mediator)
         {
-            _logger = logger;
         }
 
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            return View();
+            var tables = await _mediator.Send(new GetAllTableQuery(), cancellationToken);
+            return View(tables);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        
     }
 }
