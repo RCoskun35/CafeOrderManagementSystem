@@ -8,6 +8,7 @@ using CafeOrderManagementSystem.Application.UserManagement;
 using CafeOrderManagementSystem.Web.Middlewares;
 using CafeOrderManagementSystem.Infrastructure.Services;
 using CafeOrderManagementSystem.Application.Services;
+using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +28,10 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 
 // Add services to the container.
-builder.Services.AddControllersWithViews(); 
+builder.Services.AddControllersWithViews().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+}); ; 
 
 var app = builder.Build();
 

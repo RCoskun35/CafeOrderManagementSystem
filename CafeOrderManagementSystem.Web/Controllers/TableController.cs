@@ -19,10 +19,10 @@ namespace CafeOrderManagementSystem.Web.Controllers
         {
             return View();
         }
-        [HttpPost]
-        public async Task<IActionResult> GetAll([FromBody] GetAllTableQuery request,CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            return await HandleRequestAsync(request, cancellationToken);
+            return await HandleRequestAsync(new GetAllTableQuery(), cancellationToken);
         }
         [HttpPost]
         public async Task<IActionResult> GetById([FromBody] GetTableByIdQuery request, CancellationToken cancellationToken)

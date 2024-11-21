@@ -1,0 +1,262 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="gridContainer"></div>
+
+<script>
+    function OnBoxConfirm(){
+    Swal.fire({
+         title: "Ayarlar Silinecek",
+         text: "Izgara Ayarları Silinecek Emin misiniz ?",
+         icon: "warning",
+         showCancelButton: true,
+         confirmButtonColor: "#3085d6",
+         cancelButtonColor: "#d33",
+         confirmButtonText: "Evet Sil!"
+       }).then((result) => {
+         if (result.isConfirmed) {
+             resetStateEntityGrid();
+           Swal.fire({
+             title: "Silindi!",
+             text: "Izgara Ayarları Silindi.",
+             icon: "success"
+           });
+         }
+       });
+    }
+           function resetStateEntityGrid() {
+        try {
+            var grid = $('#gridContainer').dxDataGrid("instance");
+            grid.state(null);
+
+        } catch (e) {
+            OnErrorEx(e);
+        }
+    }
+
+    window.onload = function () {
+     if ($('#gridContainer').length) {
+        try {
+            fillGrid();
+        } catch (e) {
+            this.console.log(e);
+        }
+    }
+    }
+    
+
+        var gridOptions = {
+        dataSource:'/Table/GetAll',
+        key: 'id',
+        showBorders: true,
+        showRowLines: true,
+        headerFilter: {
+            visible: true,
+            texts: {
+                emptyValue: 'Boş Değerler'
+            }
+        },
+        filterRow: { visible: true },
+        paging: {
+            pageSize: 20
+        },
+        pager: {
+            visible: true,
+            allowedPageSizes: [10, 20, 50, 100, 500],
+            showPageSizeSelector: true,
+            showInfo: true,
+            infoText: `Toplam Kayıt: {2}`,
+            showNavigationButtons: true,
+        },
+        sorting: {
+            mode: "multiple"//"single" // or "multiple" | "none"
+        },
+         columnChooser: {
+            enabled: true,
+            height: 400,
+            mode: "select"
+        },
+        rowAlternationEnabled: true,
+
+       
+        columnFixing: {
+            enabled: true,
+        },
+        stateStoring: {
+            enabled: true,
+            type: 'custom',
+            storageKey: 'userStorage',
+            customLoad: function () {
+                var state = localStorage.getItem(this.storageKey);
+                if (state) {
+                    state = JSON.parse(state);
+                    state.searchText = null;
+                    state.selectedRowKeys = null;
+
+                    if (state.columns != undefined) {
+                        for (var i = 0; i < state.columns.length; i++) {
+
+                            state.columns[i].filterValue = null;
+                            state.columns[i].filterValues = null;
+                        }
+                    }
+
+
+                }
+                return state;
+            },
+            customSave: function (state) {
+                localStorage.setItem(this.storageKey, JSON.stringify(state));
+            },
+        },
+        loadPanel: {
+            enabled: true,
+        },
+        searchPanel: {
+            visible: true,
+        },
+        grouping: {
+            contextMenuEnabled: true
+        },
+        groupPanel: {
+            visible: true   // or "auto"
+        },
+
+        allowColumnResizing: true,
+        allowColumnReordering: true,
+        onContentReady: function (e) {
+            var $customButton = $('<div id="customButton">').dxButton({
+                toolTip: 'Izgara Ayarlarını Resetle',
+                icon: 'filter', //or your custom icon
+                onClick: function () {
+                    OnBoxConfirm();
+
+                }
+            });
+            if (e.element.find('#customButton').length == 0)
+                e.element
+                    .find('.dx-toolbar-after')
+                    .prepend($customButton);
+
+        },
+        export: {
+            enabled: true,
+            allowExportSelectedData: true,
+        },
+        onExporting(e) {
+            var dt = new Date();
+            var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet(`USER_EXPORT`);
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet,
+                autoFilterEnabled: true,
+            }).then(() => {
+                workbook.xlsx.writeBuffer().then((buffer) => {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `USER_EXPORT_` + time + '.xlsx');
+                });
+            });
+            e.cancel = true;
+        },
+        onContextMenuPreparing: function (e) {
+
+            if (e.row.rowType === "data") {
+                e.items = [
+                    {
+                        text: 'Güncelle',
+                        icon: "fa fa-refresh",
+                        onItemClick: function () {
+                            
+                            updateModal(e.row.data);
+                        }
+                    },
+                ];
+            }
+        },
+        editing: {
+      mode: 'popup',
+      allowUpdating: true,
+      allowAdding: true,
+      allowDeleting: true,
+      popup: {
+        title: 'Masa Bilgisi',
+        showTitle: true,
+        width: 700,
+        height: 525,
+      },
+      form: {
+        items: [{
+          itemType: 'group',
+          colCount: 2,
+          colSpan: 2,
+          items: [{
+            dataField: 'tableNumber',
+            editorType: 'dxTextArea',
+            colSpan: 2,
+            editorOptions: {
+              height: 100,
+            },
+          }],
+        }],
+      },
+    },
+
+        columns:  [
+        {
+        caption: "#",
+        cssClass: "bullet",
+        width: 50,
+        alignment: "center",
+        cellTemplate: function (container, options) {
+            var continuousRowIndex = (options.component.pageIndex() * options.component.pageSize()) + options.row.rowIndex + 1;
+
+            container.text(continuousRowIndex);
+
+            container.append("<strong>" + options.text + "</strong>")
+                .css({
+                    'color': 'darkorange',
+                    'font-weight': 'bold',
+                });
+        },
+    },
+            {
+            dataField: "tableNumber",
+            caption: 'Masa Adı',
+            alignment: "center",
+            cssClass: "bullet",
+            allowHeaderFiltering: false,
+
+        },
+        {
+            dataField: "createdDate",
+            caption: 'Kayıt Tarihi',
+            alignment: "center",
+            cssClass: "bullet",
+            dataType: "datetime",
+            allowFiltering: true,
+        },
+        {
+            dataField: "updatedDate",
+            caption: 'Güncelleme Tarihi',
+            alignment: "center",
+            cssClass: "bullet",
+            dataType: "datetime",
+            allowFiltering: true,
+        }
+    ],
+    }
+
+    function fillGrid(){
+        $('#gridContainer').dxDataGrid(gridOptions);
+    }
+
+    function updateModal(data){
+        console.log(data);
+    }
+
+
+</script>

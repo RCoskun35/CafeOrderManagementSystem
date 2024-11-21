@@ -26,8 +26,20 @@
     <!-- Template Main CSS File -->
     <link href="~/assets/css/style.css" rel="stylesheet">
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.12.1/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.1.7/css/dx.light.css">
 
+    <!-- DevExtreme libraries (reference only one of them) -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    
+    <script src="~/assets/devexpress/dx.all.js"></script>
+    <script>
+        //DevExpress.localization.locale(navigator.language);
+    </script>
 </head>
 <body>
   <!-- ======= Header ======= -->
@@ -353,6 +365,19 @@
 
     <!-- Template Main JS File -->
     <script src="~/assets/js/main.js"></script>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+
+
 </body>
 </html>
+<script>
+    console.log(navigator.language);
+    DevExpress.localization.locale('tr-TR');
+        document.addEventListener('DOMContentLoaded', function () {
+        //$('#Layer_1').click();
+    });
+    
+
+</script>
