@@ -161,7 +161,7 @@
          stateStoring: {
              enabled: true,
              type: 'custom',
-             storageKey: 'userStorage',
+             storageKey: 'tableStorage',
              customLoad: function () {
                  var state = localStorage.getItem(this.storageKey);
                  if (state) {
@@ -231,7 +231,7 @@
              var dt = new Date();
              var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
              const workbook = new ExcelJS.Workbook();
-             const worksheet = workbook.addWorksheet(`USER_EXPORT`);
+             const worksheet = workbook.addWorksheet(`TABLE_EXPORT`);
 
              DevExpress.excelExporter.exportDataGrid({
                  component: e.component,
@@ -239,7 +239,7 @@
                  autoFilterEnabled: true,
              }).then(() => {
                  workbook.xlsx.writeBuffer().then((buffer) => {
-                     saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `USER_EXPORT_` + time + '.xlsx');
+                     saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `TABLE_EXPORT` + time + '.xlsx');
                  });
              });
              e.cancel = true;
@@ -271,7 +271,7 @@
      }
 
     function createData() {
-         const tableNumber = document.getElementById("createTableNumber").value;
+         const tableNumber =$('#createTableNumber').val()
          if (!tableNumber) {
              errorToast("Masa numarası boş geçilemez!");
              return;
@@ -344,16 +344,9 @@
                            errorToast(xhr.responseText);
                     },
                      complete: function () {
-                           const modal = document.getElementById('createModal');
-                           const bootstrapModal = bootstrap.Modal.getInstance(modal);
-                           if (bootstrapModal) {
-                               bootstrapModal.hide();
-                           }
+                           $('#createModal').modal('hide');
                      }
                  });
           }});
     }
-
-
-
 </script>

@@ -1,4 +1,5 @@
 ﻿
+using CafeOrderManagementSystem.Application.Features.UserFeature.GetAllUser;
 using CafeOrderManagementSystem.Application.Features.UserFeature.Login;
 using CafeOrderManagementSystem.Application.Features.UserFeature.Register;
 using MediatR;
@@ -17,9 +18,14 @@ namespace CafeOrderManagementSystem.Web.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(RegisterCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            return await HandleRequestAsync(new GetAllUserQuery(), CancellationToken.None);
         }
         
     }
