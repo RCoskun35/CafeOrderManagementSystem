@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal" onclick="createFormClear()">
     Masa Ekle
 </button>
 <div id="gridContainer"></div>
@@ -64,8 +64,9 @@
              }
          }
       }
+ 
 
-    function fillGrid(){
+        function fillGrid(){
           $('#gridContainer').dxDataGrid(gridOptions);
       }
 
@@ -269,7 +270,9 @@
          },
          columns:  gridColumns,
      }
-
+     function createFormClear(){
+         $('#createTableNumber').val('');
+     }
     function createData() {
          const tableNumber =$('#createTableNumber').val()
          if (!tableNumber) {

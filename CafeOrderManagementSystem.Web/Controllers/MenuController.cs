@@ -17,29 +17,29 @@ namespace CafeOrderManagementSystem.Web.Controllers
         {
             return View();
         }
-        [HttpPost]
-        public async Task<IActionResult> GetAll([FromBody] GetAllMenuQuery request,CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> GetAll(GetAllMenuQuery request,CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> GetById([FromBody] GetMenuByIdQuery request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById(GetMenuByIdQuery request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateMenuCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(CreateMenuCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> Update([FromBody] UpdateMenuCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(UpdateMenuCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteById([FromBody] DeleteMenuByIdCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteById(DeleteMenuByIdCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }

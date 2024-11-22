@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal" onclick="createFormClear()">
     Kategori Ekle
 </button>
 <div id="gridContainer"></div>
@@ -64,7 +64,7 @@
              }
          }
       }
-
+  
     function fillGrid(){
           $('#gridContainer').dxDataGrid(gridOptions);
       }
@@ -269,7 +269,9 @@
          },
          columns:  gridColumns,
      }
-
+     function createFormClear(){
+        $('#createCategoryName').val('');
+    }
     function createData() {
          const categoryName =$('#createCategoryName').val()
          if (!categoryName) {
