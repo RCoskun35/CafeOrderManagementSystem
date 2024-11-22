@@ -25,33 +25,33 @@ namespace CafeOrderManagementSystem.Web.Controllers
             return await HandleRequestAsync(new GetAllTableQuery(), cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> GetById([FromBody] GetTableByIdQuery request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById( GetTableByIdQuery request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateTableCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create( CreateTableCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> Update([FromBody] UpdateTableCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update( UpdateTableCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteById([FromBody] DeleteTableByIdCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteById(DeleteTableByIdCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> ReservationById([FromBody] ReservationTableByIdCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> ReservationById( ReservationTableByIdCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> CancelReservationById([FromBody] CancelReservationTableByIdCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CancelReservationById( CancelReservationTableByIdCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }

@@ -15,7 +15,6 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.UpdateTabl
                 throw new Exception("Table not found");
 
             table.TableNumber = request.TableNumber;
-            table.State = request.State;
             table.UpdatedDate = DateTime.Now;
             repository.Update(table);
             await unitOfWork.SaveChangesAsync();

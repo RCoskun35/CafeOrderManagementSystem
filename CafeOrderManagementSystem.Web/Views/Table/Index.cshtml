@@ -1,0 +1,359 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">
+    Masa Ekle
+</button>
+<div id="gridContainer"></div>
+
+<div class="modal fade" id="updateModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Masa Güncelle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <input type="hidden" id="updateId" />
+                    <label for="updateTableNumber" class="col-sm-4 col-form-label">Masa Numarası</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="updateTableNumber" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                <button type="button" class="btn btn-primary" onclick="updateData()">Oluştur</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Masa Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <label for="createTableNumber" class="col-sm-4 col-form-label">Masa Numarası</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="createTableNumber" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                <button type="button" class="btn btn-primary" onclick="createData()">Oluştur</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    window.onload = function () {
+       if ($('#gridContainer').length) {
+             try {
+                 fillGrid();
+             } catch (e) {
+                 this.console.log(e);
+             }
+         }
+      }
+
+    function fillGrid(){
+          $('#gridContainer').dxDataGrid(gridOptions);
+      }
+
+    function resetStateEntityGrid() {
+         try {
+             var grid = $('#gridContainer').dxDataGrid("instance");
+             grid.state(null);
+
+         } catch (e) {
+             OnErrorEx(e);
+         }
+     }
+
+    const gridColumns  =  [
+                 {
+         caption: "#",
+         cssClass: "bullet",
+         width: 50,
+         alignment: "center",
+         cellTemplate: function (container, options) {
+             var continuousRowIndex = (options.component.pageIndex() * options.component.pageSize()) + options.row.rowIndex + 1;
+
+             container.text(continuousRowIndex);
+
+             container.append("<strong>" + options.text + "</strong>")
+                 .css({
+                     'color': 'darkorange',
+                     'font-weight': 'bold',
+                 });
+         },
+     },
+                 {
+             dataField: "tableNumber",
+             caption: 'Masa Adı',
+             alignment: "center",
+             cssClass: "bullet",
+             allowHeaderFiltering: false,
+
+         },
+                 {
+             dataField: "createdDate",
+             caption: 'Kayıt Tarihi',
+             alignment: "center",
+             cssClass: "bullet",
+             dataType: "datetime",
+             allowFiltering: true,
+         },
+                 {
+             dataField: "updatedDate",
+             caption: 'Güncelleme Tarihi',
+             alignment: "center",
+             cssClass: "bullet",
+             dataType: "datetime",
+             allowFiltering: true,
+         }
+             ]
+
+    const gridOptions = {
+         dataSource:'/Table/GetAll',
+         key: 'id',
+         showBorders: true,
+         showRowLines: true,
+         headerFilter: {
+             visible: true,
+             texts: {
+                 emptyValue: 'Boş Değerler'
+             }
+         },
+         filterRow: { visible: true },
+         paging: {
+             pageSize: 20
+         },
+         pager: {
+             visible: true,
+             allowedPageSizes: [10, 20, 50, 100, 500],
+             showPageSizeSelector: true,
+             showInfo: true,
+             infoText: `Toplam Kayıt: {2}`,
+             showNavigationButtons: true,
+         },
+         sorting: {
+             mode: "multiple"//"single" // or "multiple" | "none"
+         },
+         columnChooser: {
+             enabled: true,
+             height: 400,
+             mode: "select"
+         },
+         rowAlternationEnabled: true,
+         columnFixing: {
+             enabled: true,
+         },
+         stateStoring: {
+             enabled: true,
+             type: 'custom',
+             storageKey: 'userStorage',
+             customLoad: function () {
+                 var state = localStorage.getItem(this.storageKey);
+                 if (state) {
+                     state = JSON.parse(state);
+                     state.searchText = null;
+                     state.selectedRowKeys = null;
+
+                     if (state.columns != undefined) {
+                         for (var i = 0; i < state.columns.length; i++) {
+
+                             state.columns[i].filterValue = null;
+                             state.columns[i].filterValues = null;
+                         }
+                     }
+
+
+                 }
+                 return state;
+             },
+             customSave: function (state) {
+                 localStorage.setItem(this.storageKey, JSON.stringify(state));
+             },
+         },
+         loadPanel: {
+             enabled: true,
+         },
+         searchPanel: {
+             visible: true,
+         },
+         grouping: {
+             contextMenuEnabled: true
+         },
+         groupPanel: {
+             visible: true   // or "auto"
+         },
+         allowColumnResizing: true,
+         allowColumnReordering: true,
+         onContentReady: function (e) {
+             var $customButton = $('<div id="customButton">').dxButton({
+                 toolTip: 'Izgara Ayarlarını Resetle',
+                 icon: 'filter',
+                 onClick: function () {
+                     OnBoxConfirm({
+                             title: "Ayarlar Silinecek",
+                             text: "Izgara Ayarları Silinecek Emin misiniz?",
+                             confirmButtonText: "Evet Sil!",
+                             onConfirm: () => {
+                               resetStateEntityGrid();
+                             },
+                             successTitle: "Silindi!",
+                             successText: "Izgara Ayarları Silindi."
+                             });
+
+                 }
+             });
+             if (e.element.find('#customButton').length == 0)
+                 e.element
+                     .find('.dx-toolbar-after')
+                     .prepend($customButton);
+
+         },
+         export: {
+             enabled: true,
+             allowExportSelectedData: true,
+         },
+         onExporting(e) {
+             var dt = new Date();
+             var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+             const workbook = new ExcelJS.Workbook();
+             const worksheet = workbook.addWorksheet(`USER_EXPORT`);
+
+             DevExpress.excelExporter.exportDataGrid({
+                 component: e.component,
+                 worksheet,
+                 autoFilterEnabled: true,
+             }).then(() => {
+                 workbook.xlsx.writeBuffer().then((buffer) => {
+                     saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `USER_EXPORT_` + time + '.xlsx');
+                 });
+             });
+             e.cancel = true;
+         },
+         onContextMenuPreparing: function (e) {
+
+             if (e.row.rowType === "data") {
+                 e.items = [
+                     {
+                         text: 'Güncelle',
+                           icon: "bx bxs-edit-alt",
+                         onItemClick: function () {
+
+                              updateDataModal(e.row.data);
+                         }
+                     },
+                       {
+                          text: 'Sil',
+                           icon: "bx bxs-trash-alt",
+                          onItemClick: function () {
+
+                               deleteData(e.row.data);
+                          }
+                      },
+                 ];
+             }
+         },
+         columns:  gridColumns,
+     }
+
+    function createData() {
+         const tableNumber = document.getElementById("createTableNumber").value;
+         if (!tableNumber) {
+             errorToast("Masa numarası boş geçilemez!");
+             return;
+         }
+         $.ajax({
+              url: '/Table/Create',
+              type: 'POST',
+              data: {TableNumber: tableNumber },
+              success: function (response) {
+
+                 successToast('Masa Eklendi');
+                 fillGrid();
+             },
+             error: function (xhr) {
+                 console.error("Create Error:", xhr.responseText);
+                 errorToast(xhr.responseText);
+              },
+             complete: function () {
+                   $('#createModal').modal('hide')
+             }
+         });
+     }
+
+    function updateDataModal(data) {
+         $('#updateId').val(data.id);
+         $('#updateTableNumber').val(data.tableNumber);
+         $('#updateModal').modal('show');
+     }
+
+    function updateData() {
+         const id = $('#updateId').val();
+         const tableNumber = $('#updateTableNumber').val();
+         if (!id || !tableNumber) {
+              errorToast("Masa numarası boş olamaz");
+             return;
+         }
+
+         $.ajax({
+             url: '/Table/Update',
+             type: 'POST',
+             data: {id: id, tableNumber:tableNumber},
+             success: function (response) {
+                   successToast('Masa Güncellendi');
+                 fillGrid();
+             },
+             error: function (xhr) {
+                  errorToast("Güncelleme Başarısız:", xhr.responseText);
+              },
+              complete: function () {
+                    $('#updateModal').modal('hide')
+              }
+         });
+     }
+
+    function deleteData(data){
+       OnBoxConfirm({
+          title: "Bu Kayıt Silinecek",
+          text: "Bu kaydı silmek istediğinizden emin misiniz?",
+          confirmButtonText: "Evet Sil!",
+          onConfirm: () => {
+                $.ajax({
+                      url: '/Table/DeleteById',
+                     type: "POST",
+                     data: { id: data.id },
+                     success: function (res) {
+                         successToast('Kayıt Silindi');
+                         fillGrid();
+                     },
+                       error: function (xhr) {
+                           errorToast(xhr.responseText);
+                    },
+                     complete: function () {
+                           const modal = document.getElementById('createModal');
+                           const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                           if (bootstrapModal) {
+                               bootstrapModal.hide();
+                           }
+                     }
+                 });
+          }});
+    }
+
+
+
+</script>

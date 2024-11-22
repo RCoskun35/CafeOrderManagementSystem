@@ -9,7 +9,7 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTabl
     {
         public async Task<List<Table>> Handle(GetAllTableQuery request, CancellationToken cancellationToken)
         {
-            var result =  await repository.WhereWithTracking(x => !x.IsDeleted).Include(o=>o.Orders.Where(a=>a.Status)).ToListAsync();
+            var result =  await repository.WhereWithTracking(x => !x.IsDeleted).Include(o=>o.Orders.Where(a=>a.Status)).OrderByDescending(a=>a.CreatedDate).ToListAsync();
             return result;
         }
     }
