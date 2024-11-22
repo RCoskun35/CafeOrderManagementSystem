@@ -1,4 +1,5 @@
-﻿using CafeOrderManagementSystem.Application.Features.ProductFeature.CreateProduct;
+﻿using CafeOrderManagementSystem.Application.Features.CategoryFeature.GetAllCategory;
+using CafeOrderManagementSystem.Application.Features.ProductFeature.CreateProduct;
 using CafeOrderManagementSystem.Application.Features.ProductFeature.DeleteProductById;
 using CafeOrderManagementSystem.Application.Features.ProductFeature.GetAllProduct;
 using CafeOrderManagementSystem.Application.Features.ProductFeature.GetProductById;
@@ -13,33 +14,34 @@ namespace CafeOrderManagementSystem.Web.Controllers
         public ProductController(IMediator mediator) : base(mediator)
         {
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var categories =await _mediator.Send(new GetAllCategoryQuery());
+            return View(categories);
         }
-        [HttpPost]
-        public async Task<IActionResult> GetAll([FromBody] GetAllProductQuery request,CancellationToken cancellationToken)
-        {
-            return await HandleRequestAsync(request, cancellationToken);
-        }
-        [HttpPost]
-        public async Task<IActionResult> GetById([FromBody] GetProductByIdQuery request, CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> GetAll(GetAllProductQuery request,CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateProductCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById(GetProductByIdQuery request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> Update([FromBody] UpdateProductCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(CreateProductCommand request, CancellationToken cancellationToken)
+        {
+            return await HandleRequestAsync(request, cancellationToken);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Update(UpdateProductCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteById([FromBody] DeleteProductByIdCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteById(DeleteProductByIdCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }

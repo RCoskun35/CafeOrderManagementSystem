@@ -16,7 +16,13 @@ namespace CafeOrderManagementSystem.Application.Features.ProductFeature.CreatePr
             var isExistProduct = await repository.GetByExpressionWithTrackingAsync(x => x.Name == request.Name);
             if (isExistProduct != null)
                 throw new Exception("Product already exist");
-            var product = mapper.Map<Product>(request);
+            var product = new Product
+            {
+                Name = request.Name,
+                Description = request.Description,
+                Price =decimal.Parse(request.Price.Replace(".",",")),
+                CategoryId = request.CategoryId
+            };
             await repository.AddAsync(product);
             await unitOfWork.SaveChangesAsync();
             return product.Name;

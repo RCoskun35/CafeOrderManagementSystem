@@ -16,7 +16,7 @@ namespace CafeOrderManagementSystem.Application.Features.ProductFeature.UpdatePr
 
             product.Name = request.Name;
             product.Description = request.Description;
-            product.Price = request.Price;
+            product.Price = decimal.Parse(request.Price.Replace(".", ","));
             product.CategoryId = request.CategoryId;
             product.UpdatedDate = DateTime.Now;
             repository.Update(product);

@@ -2,5 +2,5 @@
 
 namespace CafeOrderManagementSystem.Application.Features.ProductFeature.CreateProduct
 {
-    public sealed record CreateProductCommand(string Name,string Description,decimal Price,int CategoryId) : IRequest<string>;
+    public sealed record CreateProductCommand(string Name,string Description,string Price,int CategoryId) : IRequest<string>;
 }
