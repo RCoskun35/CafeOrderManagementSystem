@@ -17,29 +17,29 @@ namespace CafeOrderManagementSystem.Web.Controllers
         {
             return View();
         }
-        [HttpPost]
-        public async Task<IActionResult> GetAll([FromBody] GetAllCategoryQuery request,CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> GetAll( GetAllCategoryQuery request,CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> GetById([FromBody] GetCategoryByIdQuery request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById( GetCategoryByIdQuery request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create( CreateCategoryCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> Update([FromBody] UpdateCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update( UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteById([FromBody] DeleteCategoryByIdCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteById( DeleteCategoryByIdCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
