@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using CafeOrderManagementSystem.Application.Features.OrderFeature.CreateOrder;
-using CafeOrderManagementSystem.Application.Features.OrderFeature.RemoveOrderDetail;
-using CafeOrderManagementSystem.Domain.Entities;
+﻿using CafeOrderManagementSystem.Domain.Entities;
 using GenericRepository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

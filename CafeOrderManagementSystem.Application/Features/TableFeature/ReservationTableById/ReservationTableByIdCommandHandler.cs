@@ -16,6 +16,7 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.Reservatio
                 throw new Exception("Table is already reserved");
 
             table.State = 2;
+            table.UpdatedDate = DateTime.Now;
             repository.Update(table);
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return "Table is reserved successfully";

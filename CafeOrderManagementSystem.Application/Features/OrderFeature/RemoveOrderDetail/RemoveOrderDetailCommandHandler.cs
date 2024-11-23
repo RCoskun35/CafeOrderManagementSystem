@@ -16,15 +16,8 @@ namespace CafeOrderManagementSystem.Application.Features.OrderFeature.AddOrderDe
         public async Task<string> Handle(RemoveOrderDetailCommand request, CancellationToken cancellationToken)
         {
             var orderDetail = await orderDetailRepository.GetByExpressionAsync(x=>x.Id==request.Id,cancellationToken);
-            if (request.Quantity == 0)
                  orderDetailRepository.Delete(orderDetail);
-            else
-            {
-                orderDetail.Quantity = request.Quantity;
-                orderDetailRepository.Update(orderDetail);
-            }
             await unitOfWork.SaveChangesAsync(cancellationToken);
-
             return "Order is updated successfully";
 
         }

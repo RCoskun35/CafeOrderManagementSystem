@@ -17,7 +17,8 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.GetTableBy
                              .Include(a => a.OrderDetails)
                              .ThenInclude(b => b.Menu)
                              .FirstOrDefault();
-            order!.TotalAmount = order.OrderDetails.Sum(a => a.Quantity * a.UnitPrice);
+            if(order != null)
+                order.TotalAmount =order == null ? 0 : order.OrderDetails.Sum(a => a.Quantity * a.UnitPrice);
 
             var table = await repository.GetByExpressionWithTrackingAsync(x => x.Id == request.Id);
 

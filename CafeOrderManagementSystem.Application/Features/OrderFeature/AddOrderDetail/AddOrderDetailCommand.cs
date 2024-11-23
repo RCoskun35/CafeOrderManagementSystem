@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace CafeOrderManagementSystem.Application.Features.OrderFeature.AddOrderDetail
 {
-    public sealed record AddOrderDetailCommand(int Id,List<OrderDetailDto> OrderDetails) : IRequest<string>;
+    public sealed record AddOrderDetailCommand(int Id,List<OrderDetailDto> OrderDetails,int? TableId = 0) : IRequest<string>;
 }

@@ -3,16 +3,43 @@
     ViewData["Title"] = "Anasayfa";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="pagetitle">
-    <h1>Blank Page</h1>
-    <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-            <li class="breadcrumb-item">Pages</li>
-            <li class="breadcrumb-item active">Blank</li>
-        </ol>
-    </nav>
-</div><!-- End Page Title -->
+<div class="col-12">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-header bg-primary text-white">
+                    Günlük Sipariş Sayısı
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" id="dailyOrderCount">0</h5>
+                    <p class="card-text">Bugün alınan toplam sipariş sayısı.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-header bg-success text-white">
+                    Günlük Hasılat
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" id="dailyRevenue">0 ₺</h5>
+                    <p class="card-text">Bugünkü toplam hasılat.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-header bg-info text-white">
+                    Masa Özet Bilgileri
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" id="tableSummary">0/10</h5>
+                    <p class="card-text">Kullanılan ve toplam masa sayısı.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <section class="section" id="partialContainer">
 

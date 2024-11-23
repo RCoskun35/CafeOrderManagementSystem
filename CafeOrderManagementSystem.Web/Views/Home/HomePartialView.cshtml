@@ -26,7 +26,7 @@
 <div class="row">
     @foreach (var table in Model)
     {
-        <div class="col-lg-3" onclick="openDiv('@table.TableNumber')">
+        <div class="col-lg-3" onclick="makePayment('@table.TableNumber')">
             <div class="card mb-3" style="@(table.State == 0 ? " background-color: lightgreen;" : table.State==1
         ? "background-color: lightcoral;" : "background-color: peru;" )">
 
@@ -39,30 +39,43 @@
                             <h5 class="card-title">
                                 @table.TableNumber-@(table.State == 0 ? "Boş" : table.State == 1 ? "Dolu" :
                             "Rezerve")
+                                
                             </h5>
                             <p class="card-text">
 
                                 @if (table.State == 0)
                                 {
-                                    <button onclick="addOrder('@table.Id', event)" class="btn btn-outline-primary">Sipariş Al</button>
-                                    <button onclick="makeReservation('@table.Id', event)" class="btn btn-outline-info">
-                                        Rezervasyon Yap
-                                    </button>
+                                     <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-primary">Sipariş Al</button>
+                                        <button onclick="makeReservation('@table.Id', event)" class="btn btn-outline-info">
+                                            Rezervasyon Yap
+                                        </button>
+                                    </div>
+
+
+                                <p class="mt-2">Toplam: 0 TL</p>
                                 }
 
                                 else @if (table.State == 1)
                                 {
-                                    <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-success">
-                                        Sipariş Ekle
-                                    </button>
-                                    <button onclick="closedOrder('@(table.Order?.Id ?? 0)', event)" class="btn btn-outline-primary">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-success">
+                                        Sipariş Düzenle
+                                        </button>
+                                    <button onclick="closedOrder('@(table.Order?.Id ?? 0)',event,@table.Order.OrderDetails.Sum(x => x.UnitPrice * x.Quantity) )" class="btn btn-outline-primary">
                                         Masayı Kapat
-                                    </button>
+                                        </button>
+                                    </div>
+                                <p class="mt-2">Toplam: @table.Order.OrderDetails.Sum(x => x.UnitPrice * x.Quantity) TL</p>
+
                                 }
                                 else @if (table.State == 2)
                                 {
-                                    <button onclick="addOrder('@table.Id', event)" class="btn btn-primary">Sipariş Al</button>
+                                  <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-primary">Sipariş Al</button>
                                     <button onclick="deleteReservation('@table.Id', event)" class="btn btn-success">Rezervasyon Sil</button>
+                                </div>
+                                <p class="mt-2">Rezervasyon Tarihi: @table.UpdatedDate.Value</p>
                                 }
 
                             </p>
@@ -78,7 +91,7 @@
 
 <div class="modal addProductToOrderModal fade bd-example-modal-lg" id="addProductToOrderModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content" style="width:1200px !important">
             <div class="modal-header">
                 <ul class="nav nav-tabs" id="productMenuTabs" role="tablist">
                     <li class="nav-item" role="presentation">
@@ -152,27 +165,47 @@
         type: 'GET',
         success: function (result) {
           $('#partialContainer').html(result);
-          addProductToOrder(selectedTableId, selectedTableId)
+            if (selectedTableId > 0) {
+                addProductToOrder(selectedTableId, selectedTableId);
+            }
         }
       });
     }
 
-    function closedOrder(orderId, event) {
+    function closedOrder(orderId,event,orderAmount, ) {
       event.stopPropagation();
-      $.ajax({
-        url: '/Order/CloseOrder',
-        type: 'POST',
-        data: { id: orderId },
-        success: function (response) {
 
-          successToast("Masa kapatıldı")
-          getPartialView();
-        },
-        error: function (xhr, status, error) {
-          console.error("Hata oluştu:", error);
-          errorToast(xhr.responseText)
-        }
-      });
+      if(orderAmount>0){
+          OnBoxConfirm({
+              title: "Siparişde ödenmemiş miktar var",
+              text: "Toplam tutarın tamamı ödenmeden kapatılsın mı?",
+              confirmButtonText: "Evet!",
+              onConfirm: () => {
+                closeOrderConfirmed(orderId);
+              }
+            });
+      }
+      else{
+           closeOrderConfirmed(orderId);
+      }
+
+     
+    }
+    function closeOrderConfirmed(orderId){
+        $.ajax({
+           url: '/Order/CloseOrder',
+           type: 'POST',
+           data: { id: orderId },
+           success: function (response) {
+
+             successToast("Masa kapatıldı")
+             getPartialView();
+           },
+           error: function (xhr, status, error) {
+             console.error("Hata oluştu:", error);
+             errorToast(xhr.responseText)
+           }
+         });
     }
     function deleteReservation(tableId, event) {
       event.stopPropagation();
@@ -248,7 +281,7 @@
         success: function (response) {
           populateMenuDropdown(response);
           allMenus = response;
-          console.log(response);
+          
         },
         error: function (xhr) {
           errorToast(xhr.responseText);
@@ -328,12 +361,14 @@
                         <div class="col-3"><p><strong>Menü Adı</strong></p></div>
                         <div class="col-2"><p><strong>Ürün Adedi</strong></p></div>
                         <div class="col-2"><p><strong>Birim Fiyatı</strong></p></div>
-                        <div class="col-2"><p><strong>Ara Toplam</strong></p></div>
+                        <div class="col-1"><p><strong>Ara Toplam</strong></p></div>
+                        <div class="col-1"><p><strong>Sil</strong></p></div>
                     </div>
                     <hr />
                 </div>`;
     }
     function getOrderDetailTemplate(detail) {
+        
       return `
                 <div id="product-${detail.product.id}" class="product-item">
                     <div class="row">
@@ -341,7 +376,8 @@
                         <div class="col-3"><p>${detail.menu?.name || ''}</p></div>
                         <div class="col-2"><p>${detail.quantity}</p></div>
                         <div class="col-2"><p>${detail.unitPrice}</p></div>
-                        <div class="col-2"><p>${detail.quantity * detail.unitPrice}</p></div>
+                        <div class="col-1"><p>${detail.quantity * detail.unitPrice}</p></div>
+                        <div class="col-1"><button class="btn btn-warning" onclick="removeOrderDetail(${detail.id})">Sil</button></div>
                     </div>
                     <hr />
                 </div>`;
@@ -369,6 +405,7 @@
       var selectedMenu = allMenus.find(m => m.id == id);
       const data = {
         id: orderId,
+        tableId: $('#selectedTableId').val(),
         orderDetails: selectedMenu.products.map(product => ({
           productId: product.id,
           quantity: quantity,
@@ -412,6 +449,7 @@
 
       const data = {
         id: orderId,
+        tableId: $('#selectedTableId').val(),
         orderDetails: [
           {
             productId: id,
@@ -463,6 +501,18 @@
       const requestData = {
         id: tableId
       };
-      console.log(tableId);
+      
+    }
+    function removeOrderDetail(id){
+        $.ajax({
+        url: '/Order/RemoveOrderDetail',
+        type: 'POST',
+        data:{id:id},
+        success: function (result) {
+            $('#addProductToOrderModal').modal('hide');
+          getPartialView($('#selectedTableId').val());
+            
+        }
+      });
     }
 </script>
