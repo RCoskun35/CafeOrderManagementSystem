@@ -1,6 +1,9 @@
-﻿@model List<CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTable.TableDto>
+﻿@using CafeOrderManagementSystem.Domain.Entities
+@using CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTable
+@model List<TableDto>
 @{
     Layout = null;
+    var dailyCount = (ViewBag.DailyOrders as List<Order>).Count();
 }
 <style>
     #addProductToOrderModal .modal-body > div {
@@ -21,6 +24,43 @@
 
 <script src="~/content/common.js"></script>
 
+<div class="col-12">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-header bg-primary text-white">
+                    Günlük Sipariş Sayısı
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" id="dailyOrderCount">@dailyCount </h5>
+                    <p class="card-text">Bugün alınan toplam sipariş sayısı</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-header bg-success text-white">
+                    Günlük Hasılat
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" id="dailyRevenue">0 ₺</h5>
+                    <p class="card-text">Bugünkü toplam hasılat.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-header bg-info text-white">
+                    Masa Özet Bilgileri
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" id="tableSummary">0/10</h5>
+                    <p class="card-text">Kullanılan ve toplam masa sayısı.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <div class="row">
