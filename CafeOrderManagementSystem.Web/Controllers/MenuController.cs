@@ -22,6 +22,12 @@ namespace CafeOrderManagementSystem.Web.Controllers
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllNoEmpty(GetAllMenuQuery request, CancellationToken cancellationToken)
+        {
+            var response = await _mediator.Send(request, cancellationToken);
+            return Ok(response.Where(x => x.Products.Count > 0).ToList());
+        }
         [HttpPost]
         public async Task<IActionResult> GetById(GetMenuByIdQuery request, CancellationToken cancellationToken)
         {
