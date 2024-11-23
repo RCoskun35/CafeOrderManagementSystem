@@ -3,7 +3,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal" onclick="createFormClear()">
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal"
+        onclick="createFormClear()">
     Menü Ekle
 </button>
 <div id="gridContainer"></div>
@@ -57,7 +58,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Menüye Ürün Ekle-</h5><h5 class="modal-title" id="menuName"></h5>
+                <h5 class="modal-title">Menüye Ürün Ekle-</h5>
+                <h5 class="modal-title" id="menuName"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -83,356 +85,357 @@
 </div>
 <script>
     window.onload = function () {
-       if ($('#gridContainer').length) {
-             try {
-                 fillGrid();
-             } catch (e) {
-                 this.console.log(e);
-             }
-         }
+      if ($('#gridContainer').length) {
+        try {
+          fillGrid();
+        } catch (e) {
+          this.console.log(e);
+        }
       }
+    }
 
-    function fillGrid(){
-          $('#gridContainer').dxDataGrid(gridOptions);
-      }
+    function fillGrid() {
+      $('#gridContainer').dxDataGrid(gridOptions);
+    }
 
     function resetStateEntityGrid() {
-         try {
-             var grid = $('#gridContainer').dxDataGrid("instance");
-             grid.state(null);
+      try {
+        var grid = $('#gridContainer').dxDataGrid("instance");
+        grid.state(null);
 
-         } catch (e) {
-             OnErrorEx(e);
-         }
-     }
+      } catch (e) {
+        OnErrorEx(e);
+      }
+    }
 
-    const gridColumns  =  [
-                 {
-         caption: "#",
-         cssClass: "bullet",
-         width: 50,
-         alignment: "center",
-         cellTemplate: function (container, options) {
-             var continuousRowIndex = (options.component.pageIndex() * options.component.pageSize()) + options.row.rowIndex + 1;
+    const gridColumns = [
+      {
+        caption: "#",
+        cssClass: "bullet",
+        width: 50,
+        alignment: "center",
+        cellTemplate: function (container, options) {
+          var continuousRowIndex = (options.component.pageIndex() * options.component.pageSize()) + options.row.rowIndex + 1;
 
-             container.text(continuousRowIndex);
+          container.text(continuousRowIndex);
 
-             container.append("<strong>" + options.text + "</strong>")
-                 .css({
-                     'color': 'darkorange',
-                     'font-weight': 'bold',
-                 });
-         },
-     },
-     {
-         caption: "Menüde Bulunan Ürün Sayısı",
-         cssClass: "bullet",
-         width: 50,
-         alignment: "center",
-         cellTemplate: function (container, options) {
-             var productCount = options.data.products.length;
-             container.text(productCount);
-             container.append("<strong>" + options.text + "</strong>")
-                 .css({
-                     'color': 'green',
-                     'font-weight': 'bold',
-                 });
-         },
-     },
-                 {
-             dataField: "name",
-             caption: 'Menü Adı',
-             alignment: "center",
-             cssClass: "bullet",
-             allowHeaderFiltering: false,
+          container.append("<strong>" + options.text + "</strong>")
+            .css({
+              'color': 'darkorange',
+              'font-weight': 'bold',
+            });
+        },
+      },
+      {
+        caption: "Menüde Bulunan Ürün Sayısı",
+        cssClass: "bullet",
+        
+        alignment: "center",
+        cellTemplate: function (container, options) {
+          var productCount = options.data.products.length;
+          container.text(productCount);
+          container.append("<strong>" + options.text + "</strong>")
+            .css({
+              'color': 'green',
+              'font-weight': 'bold',
+            });
+        },
+      },
+      {
+        dataField: "name",
+        caption: 'Menü Adı',
+        alignment: "center",
+        cssClass: "bullet",
+        allowHeaderFiltering: false,
 
-         },
-                 {
-             dataField: "createdDate",
-             caption: 'Kayıt Tarihi',
-             alignment: "center",
-             cssClass: "bullet",
-             dataType: "datetime",
-             allowFiltering: true,
-         },
-                 {
-             dataField: "updatedDate",
-             caption: 'Güncelleme Tarihi',
-             alignment: "center",
-             cssClass: "bullet",
-             dataType: "datetime",
-             allowFiltering: true,
-         }
-             ]
+      },
+      {
+        dataField: "createdDate",
+        caption: 'Kayıt Tarihi',
+        alignment: "center",
+        cssClass: "bullet",
+        dataType: "datetime",
+        allowFiltering: true,
+      },
+      {
+        dataField: "updatedDate",
+        caption: 'Güncelleme Tarihi',
+        alignment: "center",
+        cssClass: "bullet",
+        dataType: "datetime",
+        allowFiltering: true,
+      }
+    ]
 
     const gridOptions = {
-         dataSource:'/Menu/GetAll',
-         key: 'id',
-         showBorders: true,
-         showRowLines: true,
-         headerFilter: {
-             visible: true,
-             texts: {
-                 emptyValue: 'Boş Değerler'
-             }
-         },
-         filterRow: { visible: true },
-         paging: {
-             pageSize: 20
-         },
-         pager: {
-             visible: true,
-             allowedPageSizes: [10, 20, 50, 100, 500],
-             showPageSizeSelector: true,
-             showInfo: true,
-             infoText: `Toplam Kayıt: {2}`,
-             showNavigationButtons: true,
-         },
-         sorting: {
-             mode: "multiple"//"single" // or "multiple" | "none"
-         },
-         columnChooser: {
-             enabled: true,
-             height: 400,
-             mode: "select"
-         },
-         rowAlternationEnabled: true,
-         columnFixing: {
-             enabled: true,
-         },
-         stateStoring: {
-             enabled: true,
-             type: 'custom',
-             storageKey: 'menuStorage',
-             customLoad: function () {
-                 var state = localStorage.getItem(this.storageKey);
-                 if (state) {
-                     state = JSON.parse(state);
-                     state.searchText = null;
-                     state.selectedRowKeys = null;
-
-                     if (state.columns != undefined) {
-                         for (var i = 0; i < state.columns.length; i++) {
-
-                             state.columns[i].filterValue = null;
-                             state.columns[i].filterValues = null;
-                         }
-                     }
-
-
-                 }
-                 return state;
-             },
-             customSave: function (state) {
-                 localStorage.setItem(this.storageKey, JSON.stringify(state));
-             },
-         },
-         loadPanel: {
-             enabled: true,
-         },
-         searchPanel: {
-             visible: true,
-         },
-         grouping: {
-             contextMenuEnabled: true
-         },
-         groupPanel: {
-             visible: true   // or "auto"
-         },
-         allowColumnResizing: true,
-         allowColumnReordering: true,
-         onContentReady: function (e) {
-             var $customButton = $('<div id="customButton">').dxButton({
-                 toolTip: 'Izgara Ayarlarını Resetle',
-                 icon: 'filter',
-                 onClick: function () {
-                     OnBoxConfirm({
-                             title: "Ayarlar Silinecek",
-                             text: "Izgara Ayarları Silinecek Emin misiniz?",
-                             confirmButtonText: "Evet Sil!",
-                             onConfirm: () => {
-                               resetStateEntityGrid();
-                             },
-                             successTitle: "Silindi!",
-                             successText: "Izgara Ayarları Silindi."
-                             });
-
-                 }
-             });
-             if (e.element.find('#customButton').length == 0)
-                 e.element
-                     .find('.dx-toolbar-after')
-                     .prepend($customButton);
-
-         },
-         export: {
-             enabled: true,
-             allowExportSelectedData: true,
-         },
-         onExporting(e) {
-             var dt = new Date();
-             var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
-             const workbook = new ExcelJS.Workbook();
-             const worksheet = workbook.addWorksheet(`MENU_EXPORT`);
-
-             DevExpress.excelExporter.exportDataGrid({
-                 component: e.component,
-                 worksheet,
-                 autoFilterEnabled: true,
-             }).then(() => {
-                 workbook.xlsx.writeBuffer().then((buffer) => {
-                     saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `MENU_EXPORT` + time + '.xlsx');
-                 });
-             });
-             e.cancel = true;
-         },
-         onContextMenuPreparing: function (e) {
-
-             if (e.row.rowType === "data") {
-                 e.items = [
-                     {
-                         text: 'Ürün Ekle-Sil',
-                           icon: "bx bxs-message-square-add",
-                         onItemClick: function () {
-
-                              addProductToMenu(e.row.data);
-                         }
-                     },
-                     {
-                         text: 'Güncelle',
-                           icon: "bx bxs-edit-alt",
-                         onItemClick: function () {
-
-                              updateDataModal(e.row.data);
-                         }
-                     },
-                       {
-                          text: 'Sil',
-                           icon: "bx bxs-trash-alt",
-                          onItemClick: function () {
-
-                               deleteData(e.row.data);
-                          }
-                      },
-                 ];
-             }
-         },
-         columns:  gridColumns,
-         masterDetail: {
-            enabled: true,
-            template: function (container, options) {
-                const products = options.data.products;
-                $("<div>")
-                    .dxDataGrid({
-                        dataSource: products,
-                        columns: [
-                            { dataField: "name", caption: "Ürüm  Adı" },
-                            { dataField: "price", caption: "Price", format: { type: "currency" } }
-                        ],
-                        showBorders: true,
-                        columnAutoWidth: true,
-                    })
-                    .appendTo(container);
-            }
+      dataSource: '/Menu/GetAll',
+      key: 'id',
+      showBorders: true,
+      showRowLines: true,
+      headerFilter: {
+        visible: true,
+        texts: {
+          emptyValue: 'Boş Değerler'
         }
-     }
-    function createFormClear(){
-        $('#createMenuName').val('');
+      },
+      filterRow: { visible: true },
+      paging: {
+        pageSize: 20
+      },
+      pager: {
+        visible: true,
+        allowedPageSizes: [10, 20, 50, 100, 500],
+        showPageSizeSelector: true,
+        showInfo: true,
+        infoText: `Toplam Kayıt: {2}`,
+        showNavigationButtons: true,
+      },
+      sorting: {
+        mode: "multiple"//"single" // or "multiple" | "none"
+      },
+      columnChooser: {
+        enabled: true,
+        height: 400,
+        mode: "select"
+      },
+      rowAlternationEnabled: true,
+      columnFixing: {
+        enabled: true,
+      },
+      stateStoring: {
+        enabled: true,
+        type: 'custom',
+        storageKey: 'menuStorage',
+        customLoad: function () {
+          var state = localStorage.getItem(this.storageKey);
+          if (state) {
+            state = JSON.parse(state);
+            state.searchText = null;
+            state.selectedRowKeys = null;
+
+            if (state.columns != undefined) {
+              for (var i = 0; i < state.columns.length; i++) {
+
+                state.columns[i].filterValue = null;
+                state.columns[i].filterValues = null;
+              }
+            }
+
+
+          }
+          return state;
+        },
+        customSave: function (state) {
+          localStorage.setItem(this.storageKey, JSON.stringify(state));
+        },
+      },
+      loadPanel: {
+        enabled: true,
+      },
+      searchPanel: {
+        visible: true,
+      },
+      grouping: {
+        contextMenuEnabled: true
+      },
+      groupPanel: {
+        visible: true   // or "auto"
+      },
+      allowColumnResizing: true,
+      allowColumnReordering: true,
+      onContentReady: function (e) {
+        var $customButton = $('<div id="customButton">').dxButton({
+          toolTip: 'Izgara Ayarlarını Resetle',
+          icon: 'filter',
+          onClick: function () {
+            OnBoxConfirm({
+              title: "Ayarlar Silinecek",
+              text: "Izgara Ayarları Silinecek Emin misiniz?",
+              confirmButtonText: "Evet Sil!",
+              onConfirm: () => {
+                resetStateEntityGrid();
+              },
+              successTitle: "Silindi!",
+              successText: "Izgara Ayarları Silindi."
+            });
+
+          }
+        });
+        if (e.element.find('#customButton').length == 0)
+          e.element
+            .find('.dx-toolbar-after')
+            .prepend($customButton);
+
+      },
+      export: {
+        enabled: true,
+        allowExportSelectedData: true,
+      },
+      onExporting(e) {
+        var dt = new Date();
+        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet(`MENU_EXPORT`);
+
+        DevExpress.excelExporter.exportDataGrid({
+          component: e.component,
+          worksheet,
+          autoFilterEnabled: true,
+        }).then(() => {
+          workbook.xlsx.writeBuffer().then((buffer) => {
+            saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `MENU_EXPORT` + time + '.xlsx');
+          });
+        });
+        e.cancel = true;
+      },
+      onContextMenuPreparing: function (e) {
+
+        if (e.row.rowType === "data") {
+          e.items = [
+            {
+              text: 'Ürün Ekle-Sil',
+              icon: "bx bxs-message-square-add",
+              onItemClick: function () {
+
+                addProductToMenu(e.row.data);
+              }
+            },
+            {
+              text: 'Güncelle',
+              icon: "bx bxs-edit-alt",
+              onItemClick: function () {
+
+                updateDataModal(e.row.data);
+              }
+            },
+            {
+              text: 'Sil',
+              icon: "bx bxs-trash-alt",
+              onItemClick: function () {
+
+                deleteData(e.row.data);
+              }
+            },
+          ];
+        }
+      },
+      columns: gridColumns,
+      masterDetail: {
+        enabled: true,
+        template: function (container, options) {
+          const products = options.data.products;
+          $("<div>")
+            .dxDataGrid({
+              dataSource: products,
+              columns: [
+                { dataField: "name", caption: "Ürüm  Adı" },
+                { dataField: "price", caption: "Price", format: { type: "currency" } }
+              ],
+              showBorders: true,
+              columnAutoWidth: true,
+            })
+            .appendTo(container);
+        }
+      }
+    }
+    function createFormClear() {
+      $('#createMenuName').val('');
     }
     function createData() {
 
-         const menuName =$('#createMenuName').val()
-         if (!menuName) {
-             errorToast("Menü adı boş geçilemez!");
-             return;
-         }
-         $.ajax({
-              url: '/Menu/Create',
-              type: 'POST',
-              data: {name: menuName},
-              success: function (response) {
+      const menuName = $('#createMenuName').val()
+      if (!menuName) {
+        errorToast("Menü adı boş geçilemez!");
+        return;
+      }
+      $.ajax({
+        url: '/Menu/Create',
+        type: 'POST',
+        data: { name: menuName },
+        success: function (response) {
 
-                 successToast('Menü Eklendi');
-                 fillGrid();
-             },
-             error: function (xhr) {
-                 errorToast(xhr.responseText);
-              },
-             complete: function () {
-                   $('#createModal').modal('hide')
-             }
-         });
-     }
+          successToast('Menü Eklendi');
+          fillGrid();
+        },
+        error: function (xhr) {
+          errorToast(xhr.responseText);
+        },
+        complete: function () {
+          $('#createModal').modal('hide')
+        }
+      });
+    }
 
     function updateDataModal(data) {
-         $('#updateId').val(data.id);
-         $('#updateMenuName').val(data.name);
-         $('#updateModal').modal('show');
-     }
+      $('#updateId').val(data.id);
+      $('#updateMenuName').val(data.name);
+      $('#updateModal').modal('show');
+    }
 
     function updateData() {
-         const id = $('#updateId').val();
-         const menuName = $('#updateMenuName').val();
-         if (!id || !menuName) {
-              errorToast("Menü adı boş olamaz");
-             return;
-         }
+      const id = $('#updateId').val();
+      const menuName = $('#updateMenuName').val();
+      if (!id || !menuName) {
+        errorToast("Menü adı boş olamaz");
+        return;
+      }
 
-         $.ajax({
-             url: '/Menu/Update',
-             type: 'POST',
-             data: {id: id, name:menuName},
-             success: function (response) {
-                   successToast('Menü Güncellendi');
-                 fillGrid();
-             },
-             error: function (xhr) {
-                  errorToast("Güncelleme Başarısız:", xhr.responseText);
-              },
-              complete: function () {
-                    $('#updateModal').modal('hide')
-              }
-         });
-     }
+      $.ajax({
+        url: '/Menu/Update',
+        type: 'POST',
+        data: { id: id, name: menuName },
+        success: function (response) {
+          successToast('Menü Güncellendi');
+          fillGrid();
+        },
+        error: function (xhr) {
+          errorToast("Güncelleme Başarısız:", xhr.responseText);
+        },
+        complete: function () {
+          $('#updateModal').modal('hide')
+        }
+      });
+    }
 
-    function deleteData(data){
-       OnBoxConfirm({
-          title: "Bu Kayıt Silinecek",
-          text: "Bu kaydı silmek istediğinizden emin misiniz?",
-          confirmButtonText: "Evet Sil!",
-          onConfirm: () => {
-                $.ajax({
-                      url: '/Menu/DeleteById',
-                     type: "POST",
-                     data: { id: data.id },
-                     success: function (res) {
-                         successToast('Kayıt Silindi');
-                         fillGrid();
-                     },
-                       error: function (xhr) {
-                           errorToast(xhr.responseText);
-                    },
-                     complete: function () {
-                           $('#createModal').modal('hide');
-                     }
-                 });
-          }});
+    function deleteData(data) {
+      OnBoxConfirm({
+        title: "Bu Kayıt Silinecek",
+        text: "Bu kaydı silmek istediğinizden emin misiniz?",
+        confirmButtonText: "Evet Sil!",
+        onConfirm: () => {
+          $.ajax({
+            url: '/Menu/DeleteById',
+            type: "POST",
+            data: { id: data.id },
+            success: function (res) {
+              successToast('Kayıt Silindi');
+              fillGrid();
+            },
+            error: function (xhr) {
+              errorToast(xhr.responseText);
+            },
+            complete: function () {
+              $('#createModal').modal('hide');
+            }
+          });
+        }
+      });
     }
     $('#products').on('change', function () {
-             const id = $(this).val();
-             const name = $(this).find("option:selected").text();
-             var menuId = $('#selectedMenuId').val();
-             $.ajax({
-              url: '/MenuProduct/Create',
-              type: 'POST',
-              data:{menuId:menuId,productId:id},
-              success: function (response) {
-                    menuProducts.push({id:id,name:name})
-                    const productContainer = $('#allProduct');
-                    productContainer.empty();
-                    menuProducts.forEach((product) => {
+      const id = $(this).val();
+      const name = $(this).find("option:selected").text();
+      var menuId = $('#selectedMenuId').val();
+      $.ajax({
+        url: '/MenuProduct/Create',
+        type: 'POST',
+        data: { menuId: menuId, productId: id },
+        success: function (response) {
+          menuProducts.push({ id: id, name: name })
+          const productContainer = $('#allProduct');
+          productContainer.empty();
+          menuProducts.forEach((product) => {
 
-                    const productElement = $(`
+            const productElement = $(`
                                 <div id="product-${product.id}" class="product-item">
                                     <div class="row">
                                         <div class="col-9">
@@ -445,60 +448,64 @@
                                     <hr />
                                 </div>
                             `);
-                            productContainer.append(productElement);
-                        });
-                
+            productContainer.append(productElement);
+          });
 
-                const selectElement = $('#products');
-                selectElement.find(`option[value="${id}"]`).remove();
-                fillGrid();
-             },
-             error: function (xhr) {
-                 errorToast(xhr.responseText);
-              }
-         });
 
+          const selectElement = $('#products');
+          selectElement.find(`option[value="${id}"]`).remove();
+          fillGrid();
+        },
+        error: function (xhr) {
+          errorToast(xhr.responseText);
+        }
       });
+
+    });
 
 
     var menuProducts = [];
-    
-
-    function addProductToMenu(data){
-          menuProducts =[];
-          
-        $.ajax({
-              url: '/Product/GetAll',
-              type: 'GET',
-              success: function (response) {
-                    const selectElement = $('#products');
-                    selectElement.empty();
-                        response.forEach(product => {
-                            const isAlreadyAdded = data.products.some(p => p.id === product.id);
-                                if (!isAlreadyAdded) {
-                                             const option = $('<option></option>')
-                                                            .val(product.id)
-                                                            .text(product.name);
-                                            selectElement.append(option);
-                                }
-                        });
-             },
-             error: function (xhr) {
-                 errorToast(xhr.responseText);
-              }
-         });
 
 
+    function addProductToMenu(data) {
+      menuProducts = [];
+
+      $.ajax({
+        url: '/Product/GetAll',
+        type: 'GET',
+        success: function (response) {
+          const selectElement = $('#products');
+          selectElement.empty();
+          selectElement.append(
+            $('<option></option>')
+              .val(0)
+              .text('Seçiniz'));
+          response.forEach(product => {
+            const isAlreadyAdded = data.products.some(p => p.id === product.id);
+            if (!isAlreadyAdded) {
+              const option = $('<option></option>')
+                .val(product.id)
+                .text(product.name);
+              selectElement.append(option);
+            }
+          });
+        },
+        error: function (xhr) {
+          errorToast(xhr.responseText);
+        }
+      });
 
 
-         $('#menuName').text(data.name);
-         $('#selectedMenuId').val(data.id);  
-          const productContainer = $('#allProduct');
-          productContainer.empty();
-          data.products.forEach((product) => {
-         menuProducts.push({id:product.id,name:product.name});
 
-         const productElement = $(`
+
+      $('#menuName').text(data.name);
+      $('#selectedMenuId').val(data.id);
+      const productContainer = $('#allProduct');
+      productContainer.empty();
+      data.products.forEach((product) => {
+        menuProducts.push({ id: product.id, name: product.name });
+
+        const productElement = $(`
             <div id="product-${product.id}" class="product-item">
                 <div class="row">
                     <div class="col-9">
@@ -512,26 +519,26 @@
             </div>
         `);
         productContainer.append(productElement);
-    });
+      });
 
-    $('#addProductToMenuModal').modal('show');
+      $('#addProductToMenuModal').modal('show');
     }
 
-        function removeProduct(menuId,productId,productName) {
-                console.log('a1')
-            $.ajax({
-              url: '/MenuProduct/DeleteByMenuIdAndProductId',
-              type: 'POST',
-              data:{menuId:menuId,productId:productId},
-              success: function (response) {
-                    const indexToRemove = menuProducts.findIndex(product => product.id === productId);
-                    menuProducts.splice(indexToRemove, 1);
+    function removeProduct(menuId, productId, productName) {
 
-                    const productContainer = $('#allProduct');
-                    productContainer.empty();
-                    menuProducts.forEach((product) => {
+      $.ajax({
+        url: '/MenuProduct/DeleteByMenuIdAndProductId',
+        type: 'POST',
+        data: { menuId: menuId, productId: productId },
+        success: function (response) {
+          const indexToRemove = menuProducts.findIndex(product => product.id === productId);
+          menuProducts.splice(indexToRemove, 1);
 
-                    const productElement = $(`
+          const productContainer = $('#allProduct');
+          productContainer.empty();
+          menuProducts.forEach((product) => {
+
+            const productElement = $(`
                                 <div id="product-${product.id}" class="product-item">
                                     <div class="row">
                                         <div class="col-9">
@@ -544,26 +551,24 @@
                                     <hr />
                                 </div>
                             `);
-                            productContainer.append(productElement);
-                        });
+            productContainer.append(productElement);
+          });
 
 
-                const selectElement = $('#products');
-                 const option = $('<option></option>')
-                                                            .val(productId)
-                                                            .text(productName);
-                                            selectElement.append(option);
+          const selectElement = $('#products');
+          const option = $('<option></option>')
+            .val(productId)
+            .text(productName);
+          selectElement.append(option);
 
 
 
-                fillGrid();
-             },
-             error: function (xhr) {
-                 errorToast(xhr.responseText);
-              }
-         });
-
+          fillGrid();
+        },
+        error: function (xhr) {
+          errorToast(xhr.responseText);
         }
+      });
+
+    }
 </script>
-
-

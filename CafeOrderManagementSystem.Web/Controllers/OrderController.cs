@@ -18,34 +18,34 @@ namespace CafeOrderManagementSystem.Web.Controllers
         {
             return View();
         }
-        [HttpPost]
-        public async Task<IActionResult> GetAll([FromBody] GetAllOrderQuery request,CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> GetAll(GetAllOrderQuery request,CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> GetById([FromBody] GetOrderByIdQuery request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById(GetOrderByIdQuery request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateOrderCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(CreateOrderCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> AddOrderDetail([FromBody] AddOrderDetailCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddOrderDetail(AddOrderDetailCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveOrderDetail([FromBody] RemoveOrderDetailCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> RemoveOrderDetail(RemoveOrderDetailCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> CloseOrder([FromBody] CloseOrderCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CloseOrder(CloseOrderCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }

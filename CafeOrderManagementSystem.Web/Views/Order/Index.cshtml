@@ -1,0 +1,284 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="gridContainer"></div>
+<script>
+    window.onload = function () {
+      if ($('#gridContainer').length) {
+        try {
+          fillGrid();
+        } catch (e) {
+          this.console.log(e);
+        }
+      }
+    }
+
+    function fillGrid() {
+      $('#gridContainer').dxDataGrid(gridOptions);
+    }
+
+    function resetStateEntityGrid() {
+      try {
+        var grid = $('#gridContainer').dxDataGrid("instance");
+        grid.state(null);
+
+      } catch (e) {
+        OnErrorEx(e);
+      }
+    }
+
+    const gridColumns = [
+      {
+        caption: "#",
+        cssClass: "bullet",
+        width: 50,
+        alignment: "center",
+        cellTemplate: function (container, options) {
+          var continuousRowIndex = (options.component.pageIndex() * options.component.pageSize()) + options.row.rowIndex + 1;
+
+          container.text(continuousRowIndex);
+
+          container.append("<strong>" + options.text + "</strong>")
+            .css({
+              'color': 'darkorange',
+              'font-weight': 'bold',
+            });
+        },
+      },
+      {
+        caption: "Siparişte Bulunan Ürün Çeşidi",
+        cssClass: "bullet",
+
+        alignment: "center",
+        cellTemplate: function (container, options) {
+          var orderDetailsCount = options.data.orderDetails.length;
+          container.text(orderDetailsCount);
+          container.append("<strong>" + options.text +' adet'+ "</strong>")
+            .css({
+              'font-weight': 'bold',
+            });
+        },
+      },
+      {
+        dataField: "table.tableNumber",
+        caption: 'Masa Adı',
+        alignment: "center",
+        cssClass: "bullet",
+
+      },
+      {
+        dataField: "orderDate",
+        caption: 'Sipariş Tarihi',
+        alignment: "center",
+        cssClass: "bullet",
+        dataType: "datetime",
+        allowFiltering: true,
+      },
+      {
+        dataField: "totalAmount",
+        caption: 'Toplam Tutar',
+        alignment: "center",
+        cssClass: "bullet",
+        allowFiltering: true,
+      },
+      {
+        dataField: "completionDate",
+        caption: 'Sipariş Tamamlanma Tarihi',
+        alignment: "center",
+        cssClass: "bullet",
+        dataType: "datetime",
+        allowFiltering: true,
+      },
+      {
+        dataField: "status",
+        caption: 'Sipariş Durumu',
+        alignment: "center",
+        cssClass: "bullet",
+        allowHeaderFiltering: false,
+        calculateCellValue: function (data) {
+          return data.status ? "Sipariş Tamamlanmış" : "Sipariş Açık";
+        }
+      }
+    ]
+
+    const gridOptions = {
+      dataSource: '/Order/GetAll',
+      key: 'id',
+      showBorders: true,
+      showRowLines: true,
+      headerFilter: {
+        visible: true,
+        texts: {
+          emptyValue: 'Boş Değerler'
+        }
+      },
+      filterRow: { visible: true },
+      paging: {
+        pageSize: 20
+      },
+      pager: {
+        visible: true,
+        allowedPageSizes: [10, 20, 50, 100, 500],
+        showPageSizeSelector: true,
+        showInfo: true,
+        infoText: `Toplam Kayıt: {2}`,
+        showNavigationButtons: true,
+      },
+      sorting: {
+        mode: "multiple"//"single" // or "multiple" | "none"
+      },
+      columnChooser: {
+        enabled: true,
+        height: 400,
+        mode: "select"
+      },
+      rowAlternationEnabled: true,
+      columnFixing: {
+        enabled: true,
+      },
+      stateStoring: {
+        enabled: true,
+        type: 'custom',
+        storageKey: 'orderStorage',
+        customLoad: function () {
+          var state = localStorage.getItem(this.storageKey);
+          if (state) {
+            state = JSON.parse(state);
+            state.searchText = null;
+            state.selectedRowKeys = null;
+
+            if (state.columns != undefined) {
+              for (var i = 0; i < state.columns.length; i++) {
+
+                state.columns[i].filterValue = null;
+                state.columns[i].filterValues = null;
+              }
+            }
+
+
+          }
+          return state;
+        },
+        customSave: function (state) {
+          localStorage.setItem(this.storageKey, JSON.stringify(state));
+        },
+      },
+      loadPanel: {
+        enabled: true,
+      },
+      searchPanel: {
+        visible: true,
+      },
+      grouping: {
+        contextMenuEnabled: true
+      },
+      groupPanel: {
+        visible: true   // or "auto"
+      },
+      allowColumnResizing: true,
+      allowColumnReordering: true,
+      onContentReady: function (e) {
+        var $customButton = $('<div id="customButton">').dxButton({
+          toolTip: 'Izgara Ayarlarını Resetle',
+          icon: 'filter',
+          onClick: function () {
+            OnBoxConfirm({
+              title: "Ayarlar Silinecek",
+              text: "Izgara Ayarları Silinecek Emin misiniz?",
+              confirmButtonText: "Evet Sil!",
+              onConfirm: () => {
+                resetStateEntityGrid();
+              },
+              successTitle: "Silindi!",
+              successText: "Izgara Ayarları Silindi."
+            });
+
+          }
+        });
+        if (e.element.find('#customButton').length == 0)
+          e.element
+            .find('.dx-toolbar-after')
+            .prepend($customButton);
+
+      },
+      export: {
+        enabled: true,
+        allowExportSelectedData: true,
+      },
+      onExporting(e) {
+        var dt = new Date();
+        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet(`ORDER_EXPORT`);
+
+        DevExpress.excelExporter.exportDataGrid({
+          component: e.component,
+          worksheet,
+          autoFilterEnabled: true,
+        }).then(() => {
+          workbook.xlsx.writeBuffer().then((buffer) => {
+            saveAs(new Blob([buffer], { type: 'application/octet-stream' }), `ORDER_EXPORT` + time + '.xlsx');
+          });
+        });
+        e.cancel = true;
+      },
+      onContextMenuPreparing: function (e) {
+
+        if (e.row.rowType === "data") {
+          e.items = [
+            //  {
+            //     text: 'Sil',
+            //      icon: "bx bxs-trash-alt",
+            //     onItemClick: function () {
+
+            //          deleteData(e.row.data);
+            //     }
+            // },
+          ];
+        }
+      },
+      columns: gridColumns,
+      masterDetail: {
+        enabled: true,
+        template: function (container, options) {
+          const orderDetails = options.data.orderDetails;
+          $("<div>")
+            .dxDataGrid({
+              dataSource: orderDetails,
+              columns: [
+
+                { dataField: "product.name", caption: "Ürün  Adı" },
+                { dataField: "product.description", caption: "Ürün  Açıklaması" },
+                { dataField: "quantity", caption: "Ürün  Adedi" },
+                { dataField: "unitPrice", caption: "Ürünün Siparişteki Fiyatı",format: {type: "currency",currency: "TRY",precision: 2} },
+                { dataField: "product.price", caption: "Ürün Fiyatı",format: {type: "currency",currency: "TRY",precision: 2} },
+                { dataField: "menu.name", caption: "Menü Adı" },
+                {
+                    caption: "Ara Toplam", 
+                    calculateCellValue: function(data) {
+                            return data.unitPrice * data.quantity; 
+                        },
+                    format: {
+                        type: "currency",
+                        currency: "TRY" ,
+                        precision: 2
+                    },
+                alignment: "right" 
+              }
+              ],
+              showBorders: true,
+              columnAutoWidth: true,
+            })
+            .appendTo(container);
+        }
+      },
+      onRowPrepared: function (e) {
+        if (e.rowType === "data" && e.data.status === true) {
+            e.rowElement.css("background-color", "#d4edda"); 
+        }
+    }
+    }
+
+</script>

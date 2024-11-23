@@ -10,6 +10,7 @@ namespace CafeOrderManagementSystem.Application.Features.OrderFeature.GetAllOrde
         public async Task<List<Order>> Handle(GetAllOrderQuery request, CancellationToken cancellationToken)
         {
             var result = await repository.WhereWithTracking(x => !x.IsDeleted)
+                                         .Include(m=>m.Table)
                                          .Include(a => a.OrderDetails)
                                          .ThenInclude(b=>b.Product)
                                          .Include(a => a.OrderDetails)
