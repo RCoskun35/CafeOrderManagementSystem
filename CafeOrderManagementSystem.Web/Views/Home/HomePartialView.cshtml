@@ -2,7 +2,27 @@
 @{
     Layout = null;
 }
+<style>
+    #addProductToOrderModal .modal-body > div {
+        margin-bottom: 5px;
+    }
+
+    #addProductToOrderModal .modal-body {
+        padding: 10px;
+    }
+
+    #addProductToOrderModal .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+</style>
+
+
+
 <script src="~/content/common.js"></script>
+
+
+
 <div class="row">
     @foreach (var table in Model)
     {
@@ -52,61 +72,86 @@
             </div><!-- End Card with an image on left -->
         </div>
     }
-
-
-
 </div>
 
 
 
-<div class="modal fade" id="addProductToOrderModal" tabindex="-1">
-    <div class="modal-dialog">
+<div class="modal addProductToOrderModal fade bd-example-modal-lg" id="addProductToOrderModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Siparişe Ürün Ekle-</h5>
-                <h5 class="modal-title" id="menuName"></h5>
+                <ul class="nav nav-tabs" id="productMenuTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="products-tab" data-bs-toggle="tab" data-bs-target="#products-content" type="button" role="tab" aria-controls="products-content" aria-selected="true">
+                            Ürünlerden Seç
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="menus-tab" data-bs-toggle="tab" data-bs-target="#menus-content" type="button" role="tab" aria-controls="menus-content" aria-selected="false">
+                            Menülerden Seç
+                        </button>
+                    </li>
+                </ul>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
+                <div class="tab-content" id="productMenuTabsContent">
+                    <div class="tab-pane fade show active" id="products-content" role="tabpanel" aria-labelledby="products-tab">
+                        <div class="row mb-3">
+                            <label for="productQuantity" class="col-sm-4 col-form-label">Ürün Adedi</label>
+                            <div class="col-sm-8">
+                                <input type="number" id="productQuantity" value="1" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="products" class="col-sm-4 col-form-label mb-5">Ürün Ekle</label>
+                            <div class="col-sm-8">
+                                <select class="form-select" id="products"></select>
+                            </div>
+                        </div>
+                        <div id="allProduct"></div>
+                    </div>
 
-                <div class="row mb-3">
-
-                    <label for="products" class="col-sm-4 col-form-label mb-5">Ürün Ekle</label>
-                    <div class="col-sm-8">
-                        <select class="form-select" id="products">
-                        </select>
+                    <div class="tab-pane fade" id="menus-content" role="tabpanel" aria-labelledby="menus-tab">
+                        <div class="row mb-3">
+                            <label for="menus" class="col-sm-4 col-form-label">Menü Seç</label>
+                            <div class="col-sm-8">
+                                <select class="form-select" id="menus"></select>
+                            </div>
+                        </div>
+                        <div id="menuProducts"></div>
                     </div>
                 </div>
-                <div id="allProduct"></div>
-
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
-                <button type="button" class="btn btn-primary" onclick="createData()">Oluştur</button>
             </div>
         </div>
     </div>
-    <input type="hidden" id="selectedMenuId" />
+    <input type="hidden" id="selectedOrderId" />
+    <input type="hidden" id="selectedTableId" />
 </div>
-
 
 
 <script>
     function openDiv(tableNumber) {
       alert("Masa Numarası: " + tableNumber);
     }
-    function getPartialView(){
-        $.ajax({
-            url: '/Home/HomePartialView',
-            type: 'GET',
-            success: function (result) {
-                $('#partialContainer').html(result);
-            }
-        });
+    function getPartialView(selectedTableId = 0) {
+      $.ajax({
+        url: '/Home/HomePartialView',
+        type: 'GET',
+        success: function (result) {
+          $('#partialContainer').html(result);
+          addProductToOrder(selectedTableId,selectedTableId)
+        }
+      });
     }
-    
-    function closedOrder(orderId, event){
-          event.stopPropagation();
+
+    function closedOrder(orderId, event) {
+      event.stopPropagation();
       $.ajax({
         url: '/Order/CloseOrder',
         type: 'POST',
@@ -122,8 +167,8 @@
         }
       });
     }
-    function deleteReservation(tableId, event){
-          event.stopPropagation();
+    function deleteReservation(tableId, event) {
+      event.stopPropagation();
       $.ajax({
         url: '/Table/CancelReservationById',
         type: 'POST',
@@ -131,7 +176,7 @@
         success: function (response) {
 
           successToast("Rezervasyon Silindi")
-          getPartialView(); 
+          getPartialView();
         },
         error: function (xhr, status, error) {
           console.error("Hata oluştu:", error);
@@ -157,20 +202,176 @@
       });
     }
 
+
+
+
+    var orderProducts = [];
     function addProductToOrder(tableId, event) {
+    $('#selectedTableId').val(tableId);
+    try {
       event.stopPropagation();
-       $.ajax({
+
+    }catch(err){
+    }
+      orderProducts = [];
+      fetchProducts();
+      fetchTableDetails(tableId);
+    }
+    function fetchProducts() {
+      $.ajax({
+        url: '/Product/GetAll',
+        type: 'GET',
+        success: function (response) {
+          populateProductDropdown(response);
+          $('#addProductToOrderModal').modal('show');
+        },
+        error: function (xhr) {
+          errorToast(xhr.responseText);
+        }
+      });
+    }
+    function populateProductDropdown(products) {
+      const dropdown = $('#products');
+      dropdown.empty();
+      dropdown.append($('<option></option>').val(0).text('Seçiniz'));
+
+      products.forEach(product => {
+        dropdown.append(
+          `<option value="${product.id}"
+                          data-price="${product.price}"
+                          data-quantity="${product.quantity}"
+                          data-menu="${product.menu?.name || ''}">
+                      ${product.name}
+                  </option>`
+        );
+      });
+    }
+    function fetchTableDetails(tableId) {
+      $.ajax({
         url: '/Table/GetById',
         type: 'POST',
         data: { id: tableId },
         success: function (response) {
-          console.log(response);
+          $('#selectedOrderId').val(response.order.id);
+          renderOrderDetails(response.order.orderDetails);
         },
         error: function (xhr) {
-          errorToast(xhr.responseText)
+          errorToast(xhr.responseText);
         }
       });
+    }
+    function renderOrderDetails(orderDetails) {
+      const productContainer = $('#allProduct');
+      productContainer.empty();
+      productContainer.append(getOrderHeaderTemplate());
+      let totalPrice = 0;
+      orderDetails.forEach(detail => {
+        totalPrice += detail.unitPrice * detail.quantity;
+        orderProducts.push({
+          id: detail.product.id,
+          name: detail.product.name,
+          price: detail.unitPrice,
+          quantity: detail.quantity,
+          menu: detail.menu?.name || ''
+        });
 
+        productContainer.append(getOrderDetailTemplate(detail));
+      });
+      productContainer.append(getOrderSummaryTemplate(totalPrice));
+    }
+    function getOrderHeaderTemplate() {
+      return `
+              <div id="product-0" class="product-item">
+                  <div class="row">
+                      <div class="col-3"><p><strong>Ürün Adı</strong></p></div>
+                      <div class="col-3"><p><strong>Menü Adı</strong></p></div>
+                      <div class="col-2"><p><strong>Ürün Adedi</strong></p></div>
+                      <div class="col-2"><p><strong>Birim Fiyatı</strong></p></div>
+                      <div class="col-2"><p><strong>Ara Toplam</strong></p></div>
+                  </div>
+                  <hr />
+              </div>`;
+    }
+    function getOrderDetailTemplate(detail) {
+      return `
+              <div id="product-${detail.product.id}" class="product-item">
+                  <div class="row">
+                      <div class="col-3"><p>${detail.product.name}</p></div>
+                      <div class="col-3"><p>${detail.menu?.name || ''}</p></div>
+                      <div class="col-2"><p>${detail.quantity}</p></div>
+                      <div class="col-2"><p>${detail.unitPrice}</p></div>
+                      <div class="col-2"><p>${detail.quantity * detail.unitPrice}</p></div>
+                  </div>
+                  <hr />
+              </div>`;
+    }
+    function getOrderSummaryTemplate(totalPrice) {
+      return `
+              <div id="product-summary" class="product-item">
+                  <div class="row">
+                      <div class="col-10"><p><strong>Toplam Tutar:</strong></p></div>
+                      <div class="col-2"><p><strong>${totalPrice}</strong></p></div>
+                  </div>
+                  <hr />
+              </div>`;
+    }
+
+    $('#products').on('change', function () {
+      const selectedOption = $(this).find(':selected');
+      const id = selectedOption.val();
+      const price = selectedOption.data('price');
+      const quantity = $('#productQuantity').val();
+      const menu = selectedOption.data('menu');
+      const name = selectedOption.text();
+      const orderId = $('#selectedOrderId').val();
+
+      const data = {
+        id: orderId,
+        orderDetails: [
+          {
+            productId: id,
+            quantity: quantity
+          }
+        ]
+      };
+
+      $.ajax({
+        url: '/Order/AddOrderDetail',
+        type: 'POST',
+        data: data,
+        success: function () {
+          orderProducts.push({ id, name, price, quantity: quantity, menu });
+          renderUpdatedOrderDetails();
+
+          $('#addProductToOrderModal').modal('hide');
+
+          getPartialView($('#selectedTableId').val());
+        },
+        error: function (xhr) {
+          errorToast(xhr.responseText);
+        }
+      });
+    });
+    function renderUpdatedOrderDetails() {
+      const productContainer = $('#allProduct');
+      productContainer.empty();
+      productContainer.append(getOrderHeaderTemplate());
+      let totalPrice = 0;
+      orderProducts.forEach(product => {
+        totalPrice += product.price * product.quantity;
+        productContainer.append(`
+                  <div id="product-${product.id}" class="product-item">
+                      <div class="row">
+                          <div class="col-4"><p>${product.name}</p></div>
+                          <div class="col-4"><p>${product.menu || ''}</p></div>
+                          <div class="col-2"><p>${product.quantity}</p></div>
+                          <div class="col-2"><p>${product.price}</p></div>
+                      </div>
+                      <hr />
+                  </div>`);
+      });
+
+      productContainer.append(getOrderSummaryTemplate(totalPrice));
     }
     function addOrder(tableId, event) {
       event.stopPropagation();

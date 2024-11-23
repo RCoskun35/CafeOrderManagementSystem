@@ -36,6 +36,7 @@ namespace CafeOrderManagementSystem.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddOrderDetail(AddOrderDetailCommand request, CancellationToken cancellationToken)
         {
+          
             return await HandleRequestAsync(request, cancellationToken);
         }
 
