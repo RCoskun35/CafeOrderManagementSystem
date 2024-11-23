@@ -34,7 +34,7 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTabl
                 IsDeleted = x.IsDeleted,
                 Order = orders.FirstOrDefault(a => a.TableId == x.Id),
 
-            }).ToList();
+            }).OrderBy(a=>a.CreatedDate).ToList();
 
             return result;
         }
