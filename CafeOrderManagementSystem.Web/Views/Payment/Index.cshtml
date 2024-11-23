@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Siparişler";
+    ViewData["Title"] = "Ödemeler";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div id="gridContainer"></div>
@@ -30,60 +30,53 @@
     }
 
     const gridColumns = [
-      {
-        caption: "#",
-        cssClass: "bullet",
-        width: 50,
-        alignment: "center",
-        cellTemplate: function (container, options) {
-          var continuousRowIndex = (options.component.pageIndex() * options.component.pageSize()) + options.row.rowIndex + 1;
-
-          container.text(continuousRowIndex);
-
-          container.append("<strong>" + options.text + "</strong>")
-            .css({
-              'color': 'darkorange',
-              'font-weight': 'bold',
-            });
-        },
-      },
       
-      {
-        dataField: "table.tableNumber",
+       {
+        dataField: "order.table.tableNumber",
         caption: 'Masa Adı',
         alignment: "center",
         cssClass: "bullet",
-
+        allowFiltering: true,
       },
       {
-        dataField: "orderDate",
-        caption: 'Sipariş Tarihi',
+        dataField: "order.id",
+        caption: 'Sipariş Numarası',
+        alignment: "center",
+        cssClass: "bullet",
+        allowFiltering: true,
+        groupIndex: 0,
+      },
+      {
+        dataField: "paymentMethod",
+        caption: 'Ödeme Tipi',
+        alignment: "center",
+        cssClass: "bullet",
+
+      },
+      { 
+          dataField: "amount", 
+          caption: "Ödeme Miktarı",
+          format: {
+             type: "currency",currency: "TRY",precision: 2
+          }
+      },
+         {
+          dataField: "order.totalAmount",
+          caption: "Sipariş Tutarı",
+          format: {
+             type: "currency",currency: "TRY",precision: 2
+          }
+      },
+      {
+        dataField: "paymentDate",
+        caption: 'Ödeme Tarihi',
         alignment: "center",
         cssClass: "bullet",
         dataType: "datetime",
         allowFiltering: true,
       },
       {
-        dataField: "totalAmount",
-        caption: 'Toplam Tutar',
-        alignment: "center",
-        cssClass: "bullet",
-        allowFiltering: true,
-      },
-      {
-        caption: "Siparişte Bulunan Ürün Çeşidi",
-        cssClass: "bullet",
-
-        alignment: "center",
-        cellTemplate: function (container, options) {
-          var orderDetailsCount = options.data.orderDetails.length;
-          container.text(orderDetailsCount);
-          container.append("<strong>" + options.text +' adet'+ "</strong>")
-            
-        },
-      },
-      {
-        dataField: "completionDate",
+        dataField: "order.completionDate",
         caption: 'Sipariş Tamamlanma Tarihi',
         alignment: "center",
         cssClass: "bullet",
@@ -91,22 +84,28 @@
         allowFiltering: true,
       },
       {
-        dataField: "status",
         caption: 'Sipariş Durumu',
         alignment: "center",
         cssClass: "bullet",
         allowHeaderFiltering: false,
         calculateCellValue: function (data) {
-          return data.status ? "Sipariş Tamamlanmış" : "Sipariş Açık";
+          return data.order.status ? "Sipariş Tamamlanmış" : "Sipariş Açık";
         }
       }
+      
     ]
 
     const gridOptions = {
-      dataSource: '/Order/GetAll',
+      dataSource: '/Payment/GetAll',
       key: 'id',
       showBorders: true,
       showRowLines: true,
+      grouping: {
+         autoExpandAll: true
+      },
+      groupPanel: {
+         visible: true 
+      },
       headerFilter: {
         visible: true,
         texts: {
@@ -242,7 +241,7 @@
       masterDetail: {
         enabled: true,
         template: function (container, options) {
-          const orderDetails = options.data.orderDetails;
+          const orderDetails = options.data.order.orderDetails;
           $("<div>")
             .dxDataGrid({
               dataSource: orderDetails,
@@ -255,16 +254,16 @@
                 { dataField: "product.price", caption: "Ürün Fiyatı",format: {type: "currency",currency: "TRY",precision: 2} },
                 { dataField: "menu.name", caption: "Menü Adı" },
                 {
-                    caption: "Ara Toplam", 
+                    caption: "Ara Toplam",
                     calculateCellValue: function(data) {
-                            return data.unitPrice * data.quantity; 
+                            return data.unitPrice * data.quantity;
                         },
                     format: {
                         type: "currency",
                         currency: "TRY" ,
                         precision: 2
                     },
-                alignment: "right" 
+                alignment: "right"
               }
               ],
               showBorders: true,
@@ -274,8 +273,8 @@
         }
       },
       onRowPrepared: function (e) {
-        if (e.rowType === "data" && e.data.status === true) {
-            e.rowElement.css("background-color", "#d4edda"); 
+        if (e.rowType === "data" && e.data.order.status === true) {
+            e.rowElement.css("background-color", "#d4edda");
         }
     }
     }

@@ -29,14 +29,13 @@ namespace CafeOrderManagementSystem.Application.UserManagement
         {
             get
             {
-               var userId = _httpContextAccessor.HttpContext?.User?.Claims
-                    .FirstOrDefault(c => c.Type == "UserId")!.Value;
+               
                 var firstName = _httpContextAccessor.HttpContext?.User?.Claims
                     .FirstOrDefault(c => c.Type == "FirstName")!.Value;
                 var lastName = _httpContextAccessor.HttpContext?.User?.Claims
                     .FirstOrDefault(c => c.Type == "LastName")!.Value;
 
-                return $"{userId} - {firstName} {lastName}";
+                return $"{firstName} {lastName}";
                 
             }
         }

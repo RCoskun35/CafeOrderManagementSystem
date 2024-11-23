@@ -32,5 +32,12 @@ namespace CafeOrderManagementSystem.Web.Controllers
             }
 
         }
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            LogService.Log("Çıkış Yapıldı", "", CurrentUser.Id);
+            HttpContext.Response.Cookies.Delete("Cookies");
+            return RedirectToAction("Login");
+        }
     }
 }

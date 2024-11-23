@@ -9,7 +9,23 @@ namespace CafeOrderManagementSystem.Application.Features.PaymentFeature.GetAllPa
     {
         public async Task<List<Payment>> Handle(GetAllPaymentQuery request, CancellationToken cancellationToken)
         {
-            return await repository.WhereWithTracking(x => !x.IsDeleted).Include(a=>a.Order).ToListAsync(cancellationToken);
+            
+   
+
+            var result = await repository.WhereWithTracking(x => !x.IsDeleted)
+                                         .Include(a=> a.Order)
+                                         .ThenInclude(b=>b.Table)
+                                         .Include(a => a.Order)
+                                         .ThenInclude(b => b.OrderDetails)
+                                         .ThenInclude(c => c.Product)
+                                         .Include(a => a.Order)
+                                         .ThenInclude(b => b.OrderDetails)
+                                         .ThenInclude(c => c.Menu)
+                                         .OrderByDescending(b=>b.PaymentDate)
+                                         .ToListAsync(cancellationToken);
+            result.ForEach(x=>x.Order.TotalAmount = x.Order.OrderDetails.Sum(a => a.Quantity * a.UnitPrice));
+
+            return result;
         }
     }
 }
