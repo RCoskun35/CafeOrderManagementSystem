@@ -23,6 +23,7 @@ namespace CafeOrderManagementSystem.Application.Features.OrderFeature.CreateOrde
            {
                TableId = request.TableId,
                OrderDate = DateTime.Now,
+                Status = false,
             };
             await repository.AddAsync(order, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);

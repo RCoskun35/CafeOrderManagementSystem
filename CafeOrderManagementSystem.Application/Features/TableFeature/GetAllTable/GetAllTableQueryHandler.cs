@@ -5,12 +5,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTable
 {
-    public class GetAllTableQueryHandler(IRepository<Table> repository) : IRequestHandler<GetAllTableQuery, List<Table>>
+    public class GetAllTableQueryHandler(IRepository<Table> repository,IRepository<Order> orderRepository) : IRequestHandler<GetAllTableQuery, List<TableDto>>
     {
-        public async Task<List<Table>> Handle(GetAllTableQuery request, CancellationToken cancellationToken)
+        public async Task<List<TableDto>> Handle(GetAllTableQuery request, CancellationToken cancellationToken)
         {
-            var result =  await repository.WhereWithTracking(x => !x.IsDeleted).Include(o=>o.Orders.Where(a=>a.Status)).OrderByDescending(a=>a.CreatedDate).ToListAsync();
+            var orders = orderRepository.WhereWithTracking(x => !x.IsDeleted && !x.Status)
+                                         .Include(m => m.Table)
+                                         .Include(a => a.OrderDetails)
+                                         .ThenInclude(b => b.Product)
+                                         .Include(a => a.OrderDetails)
+                                         .ThenInclude(b => b.Menu)
+                                         .ToList();
+
+                orders.ForEach(x => x.TotalAmount = x.OrderDetails.Sum(a => a.Quantity * a.UnitPrice));
+
+
+            var tables = await repository.WhereWithTracking(x => !x.IsDeleted)
+                                         .ToListAsync(cancellationToken);
+
+            var result = tables.Select(x => new TableDto
+            {
+                Id = x.Id,
+                TableNumber = x.TableNumber,
+                State = x.State,
+                CreatedDate = x.CreatedDate,
+                UpdatedDate = x.UpdatedDate,
+                DeletedDate = x.DeletedDate,
+                IsDeleted = x.IsDeleted,
+                Order = orders.FirstOrDefault(a => a.TableId == x.Id),
+
+            }).ToList();
+
             return result;
         }
+        
     }
 }
