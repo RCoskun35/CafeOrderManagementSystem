@@ -57,9 +57,52 @@
 
 </div>
 
+
+
+<div class="modal fade" id="addProductToOrderModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Siparişe Ürün Ekle-</h5>
+                <h5 class="modal-title" id="menuName"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row mb-3">
+
+                    <label for="products" class="col-sm-4 col-form-label mb-5">Ürün Ekle</label>
+                    <div class="col-sm-8">
+                        <select class="form-select" id="products">
+                        </select>
+                    </div>
+                </div>
+                <div id="allProduct"></div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                <button type="button" class="btn btn-primary" onclick="createData()">Oluştur</button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="selectedMenuId" />
+</div>
+
+
+
 <script>
     function openDiv(tableNumber) {
       alert("Masa Numarası: " + tableNumber);
+    }
+    function getPartialView(){
+        $.ajax({
+            url: '/Home/HomePartialView',
+            type: 'GET',
+            success: function (result) {
+                $('#partialContainer').html(result);
+            }
+        });
     }
     
     function closedOrder(orderId, event){
@@ -71,13 +114,7 @@
         success: function (response) {
 
           successToast("Masa kapatıldı")
-           $.ajax({
-            url: '/Home/HomePartialView',
-            type: 'GET',
-            success: function (result) {
-                $('#partialContainer').html(result);
-            }
-        });
+          getPartialView();
         },
         error: function (xhr, status, error) {
           console.error("Hata oluştu:", error);
@@ -85,7 +122,6 @@
         }
       });
     }
-
     function deleteReservation(tableId, event){
           event.stopPropagation();
       $.ajax({
@@ -95,13 +131,7 @@
         success: function (response) {
 
           successToast("Rezervasyon Silindi")
-           $.ajax({
-            url: '/Home/HomePartialView',
-            type: 'GET',
-            success: function (result) {
-                $('#partialContainer').html(result);
-            }
-        });
+          getPartialView(); 
         },
         error: function (xhr, status, error) {
           console.error("Hata oluştu:", error);
@@ -109,9 +139,7 @@
         }
       });
     }
-
     function makeReservation(tableId, event) {
-
       event.stopPropagation();
       $.ajax({
         url: '/Table/ReservationById',
@@ -120,13 +148,7 @@
         success: function (response) {
 
           successToast("Rezervasyon Gerçekleştirildi")
-           $.ajax({
-            url: '/Home/HomePartialView',
-            type: 'GET',
-            success: function (result) {
-                $('#partialContainer').html(result);
-            }
-        });
+          getPartialView();
         },
         error: function (xhr, status, error) {
           console.error("Hata oluştu:", error);
@@ -134,15 +156,27 @@
         }
       });
     }
+
     function addProductToOrder(tableId, event) {
       event.stopPropagation();
-      alert(tableId);
+       $.ajax({
+        url: '/Table/GetById',
+        type: 'POST',
+        data: { id: tableId },
+        success: function (response) {
+          console.log(response);
+        },
+        error: function (xhr) {
+          errorToast(xhr.responseText)
+        }
+      });
+
     }
     function addOrder(tableId, event) {
       event.stopPropagation();
       const requestData = {
         id: tableId
       };
-
+      console.log(tableId);
     }
 </script>

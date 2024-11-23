@@ -1,14 +1,40 @@
-﻿using CafeOrderManagementSystem.Domain.Entities;
+﻿using CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTable;
+using CafeOrderManagementSystem.Domain.Entities;
 using GenericRepository;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace CafeOrderManagementSystem.Application.Features.TableFeature.GetTableById
 {
-    public class GetTableByIdQueryHandler(IRepository<Table> repository) : IRequestHandler<GetTableByIdQuery, Table>
+    public class GetTableByIdQueryHandler(IRepository<Table> repository,IRepository<Order> orderRepository) : IRequestHandler<GetTableByIdQuery, TableDto>
     {
-        public async Task<Table> Handle(GetTableByIdQuery request, CancellationToken cancellationToken)
+        public async Task<TableDto> Handle(GetTableByIdQuery request, CancellationToken cancellationToken)
         {
-            return await repository.GetByExpressionWithTrackingAsync(x => x.Id == request.Id);
+            var order = orderRepository.WhereWithTracking(x => !x.IsDeleted && !x.Status && x.TableId == request.Id)
+                             .Include(m => m.Table)
+                             .Include(a => a.OrderDetails)
+                             .ThenInclude(b => b.Product)
+                             .Include(a => a.OrderDetails)
+                             .ThenInclude(b => b.Menu)
+                             .FirstOrDefault();
+            order!.TotalAmount = order.OrderDetails.Sum(a => a.Quantity * a.UnitPrice);
+
+            var table = await repository.GetByExpressionWithTrackingAsync(x => x.Id == request.Id);
+
+            var result = new TableDto
+            {
+                Id = table.Id,
+                TableNumber = table.TableNumber,
+                State = table.State,
+                CreatedDate = table.CreatedDate,
+                UpdatedDate = table.UpdatedDate,
+                DeletedDate = table.DeletedDate,
+                IsDeleted = table.IsDeleted,
+                Order = order
+            };
+
+
+            return result;
         }
     }
 

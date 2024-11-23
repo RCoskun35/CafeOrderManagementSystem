@@ -1,4 +1,5 @@
-﻿using CafeOrderManagementSystem.Domain.Entities;
+﻿using CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTable;
+using CafeOrderManagementSystem.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CafeOrderManagementSystem.Application.Features.TableFeature.GetTableById
 {
-    public sealed record GetTableByIdQuery(int Id) : IRequest<Table>;
+    public sealed record GetTableByIdQuery(int Id) : IRequest<TableDto>;
 
 
 }
