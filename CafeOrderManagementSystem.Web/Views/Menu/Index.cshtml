@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -54,6 +53,34 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="addProductToMenuModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Menüye Ürün Ekle-</h5><h5 class="modal-title" id="menuName"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row mb-3">
+
+                    <label for="products" class="col-sm-4 col-form-label mb-5">Ürün Ekle</label>
+                    <div class="col-sm-8">
+                        <select class="form-select" id="products">
+                        </select>
+                    </div>
+                </div>
+                <div id="allProduct"></div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                <button type="button" class="btn btn-primary" onclick="createData()">Oluştur</button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="selectedMenuId" />
+</div>
 <script>
     window.onload = function () {
        if ($('#gridContainer').length) {
@@ -93,6 +120,21 @@
              container.append("<strong>" + options.text + "</strong>")
                  .css({
                      'color': 'darkorange',
+                     'font-weight': 'bold',
+                 });
+         },
+     },
+     {
+         caption: "Menüde Bulunan Ürün Sayısı",
+         cssClass: "bullet",
+         width: 50,
+         alignment: "center",
+         cellTemplate: function (container, options) {
+             var productCount = options.data.products.length;
+             container.text(productCount);
+             container.append("<strong>" + options.text + "</strong>")
+                 .css({
+                     'color': 'green',
                      'font-weight': 'bold',
                  });
          },
@@ -249,6 +291,14 @@
              if (e.row.rowType === "data") {
                  e.items = [
                      {
+                         text: 'Ürün Ekle-Sil',
+                           icon: "bx bxs-message-square-add",
+                         onItemClick: function () {
+
+                              addProductToMenu(e.row.data);
+                         }
+                     },
+                     {
                          text: 'Güncelle',
                            icon: "bx bxs-edit-alt",
                          onItemClick: function () {
@@ -268,6 +318,23 @@
              }
          },
          columns:  gridColumns,
+         masterDetail: {
+            enabled: true,
+            template: function (container, options) {
+                const products = options.data.products;
+                $("<div>")
+                    .dxDataGrid({
+                        dataSource: products,
+                        columns: [
+                            { dataField: "name", caption: "Ürüm  Adı" },
+                            { dataField: "price", caption: "Price", format: { type: "currency" } }
+                        ],
+                        showBorders: true,
+                        columnAutoWidth: true,
+                    })
+                    .appendTo(container);
+            }
+        }
      }
     function createFormClear(){
         $('#createMenuName').val('');
@@ -351,6 +418,152 @@
                  });
           }});
     }
+    $('#products').on('change', function () {
+             const id = $(this).val();
+             const name = $(this).find("option:selected").text();
+             var menuId = $('#selectedMenuId').val();
+             $.ajax({
+              url: '/MenuProduct/Create',
+              type: 'POST',
+              data:{menuId:menuId,productId:id},
+              success: function (response) {
+                    menuProducts.push({id:id,name:name})
+                    const productContainer = $('#allProduct');
+                    productContainer.empty();
+                    menuProducts.forEach((product) => {
+
+                    const productElement = $(`
+                                <div id="product-${product.id}" class="product-item">
+                                    <div class="row">
+                                        <div class="col-9">
+                                            <p><strong>${product.name}</strong></p>
+                                        </div>
+                                        <div class="col-3 d-flex align-items-center">
+                                            <button class="btn btn-danger btn-sm" onclick="removeProduct(${menuId},${product.id},'${product.name}')">Sil</button>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                            `);
+                            productContainer.append(productElement);
+                        });
+                
+
+                const selectElement = $('#products');
+                selectElement.find(`option[value="${id}"]`).remove();
+                fillGrid();
+             },
+             error: function (xhr) {
+                 errorToast(xhr.responseText);
+              }
+         });
+
+      });
+
+
+    var menuProducts = [];
+    
+
+    function addProductToMenu(data){
+          menuProducts =[];
+          
+        $.ajax({
+              url: '/Product/GetAll',
+              type: 'GET',
+              success: function (response) {
+                    const selectElement = $('#products');
+                    selectElement.empty();
+                        response.forEach(product => {
+                            const isAlreadyAdded = data.products.some(p => p.id === product.id);
+                                if (!isAlreadyAdded) {
+                                             const option = $('<option></option>')
+                                                            .val(product.id)
+                                                            .text(product.name);
+                                            selectElement.append(option);
+                                }
+                        });
+             },
+             error: function (xhr) {
+                 errorToast(xhr.responseText);
+              }
+         });
+
+
+
+
+         $('#menuName').text(data.name);
+         $('#selectedMenuId').val(data.id);  
+          const productContainer = $('#allProduct');
+          productContainer.empty();
+          data.products.forEach((product) => {
+         menuProducts.push({id:product.id,name:product.name});
+
+         const productElement = $(`
+            <div id="product-${product.id}" class="product-item">
+                <div class="row">
+                    <div class="col-9">
+                        <p><strong>${product.name}</strong></p>
+                    </div>
+                    <div class="col-3 d-flex align-items-center">
+                        <button class="btn btn-danger btn-sm" onclick="removeProduct(${data.id},${product.id},'${product.name}')">Sil</button>
+                    </div>
+                </div>
+                <hr />
+            </div>
+        `);
+        productContainer.append(productElement);
+    });
+
+    $('#addProductToMenuModal').modal('show');
+    }
+
+        function removeProduct(menuId,productId,productName) {
+                console.log('a1')
+            $.ajax({
+              url: '/MenuProduct/DeleteByMenuIdAndProductId',
+              type: 'POST',
+              data:{menuId:menuId,productId:productId},
+              success: function (response) {
+                    const indexToRemove = menuProducts.findIndex(product => product.id === productId);
+                    menuProducts.splice(indexToRemove, 1);
+
+                    const productContainer = $('#allProduct');
+                    productContainer.empty();
+                    menuProducts.forEach((product) => {
+
+                    const productElement = $(`
+                                <div id="product-${product.id}" class="product-item">
+                                    <div class="row">
+                                        <div class="col-9">
+                                            <p><strong>${product.name}</strong></p>
+                                        </div>
+                                        <div class="col-3 d-flex align-items-center">
+                                            <button class="btn btn-danger btn-sm" onclick="removeProduct(${menuId},${product.id},'${product.name}')">Sil</button>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                            `);
+                            productContainer.append(productElement);
+                        });
+
+
+                const selectElement = $('#products');
+                 const option = $('<option></option>')
+                                                            .val(productId)
+                                                            .text(productName);
+                                            selectElement.append(option);
+
+
+
+                fillGrid();
+             },
+             error: function (xhr) {
+                 errorToast(xhr.responseText);
+              }
+         });
+
+        }
 </script>
 
 

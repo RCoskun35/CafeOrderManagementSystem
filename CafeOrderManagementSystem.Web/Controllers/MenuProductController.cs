@@ -16,18 +16,18 @@ namespace CafeOrderManagementSystem.Web.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> GetByMenuId([FromBody] GetMenuProductByMenuIdQuery request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetByMenuId( GetMenuProductByMenuIdQuery request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateMenuProductCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create( CreateMenuProductCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteByMenuIdAndProductId([FromBody] DeleteMenuProductByMenuIdAndProductIdCommand request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteByMenuIdAndProductId( DeleteMenuProductByMenuIdAndProductIdCommand request, CancellationToken cancellationToken)
         {
             return await HandleRequestAsync(request, cancellationToken);
         }

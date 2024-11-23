@@ -23,10 +23,10 @@
                 <div class="card mb-3" style="@(table.State == 0 ? "background-color: lightgreen;" : table.State == 1 ? "background-color: lightcoral;" : "background-color: peru;")">
 
                     <div class="row g-0">
-                        <div class="col-md-4" style="padding: 10px;">
+                       @*  <div class="col-md-4" style="padding: 10px;">
                             <img src="assets/img/table.jpg" class="img-fluid rounded-start" alt="...">
-                        </div>
-                        <div class="col-md-8">
+                        </div> *@
+                        <div class="col-md-12">
                             <div class="card-body">
                                 <h5 class="card-title">@table.TableNumber-@(table.State == 0 ? "Boş" : table.State == 1 ? "Dolu" : "Rezerve")</h5>
                                 <p class="card-text">
@@ -34,18 +34,18 @@
                                     @if (table.State == 0)
                                     {
                                         <button onclick="addOrder('@table.Id', event)" class="btn btn-outline-primary">Sipariş Al</button>
-                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-info mt-2">Rezervasyon Yap</button>
+                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-info">Rezervasyon Yap</button>
                                     }
 
                                    else @if (table.State == 1)
                                     {
                                         <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-success">Sipariş Ekle</button>
-                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-primary mt-2">Masayı Kapat</button>
+                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-primary">Masayı Kapat</button>
                                     }
                                     else @if (table.State == 2)
                                     {
                                         <button onclick="addOrder('@table.Id', event)" class="btn btn-primary">Sipariş Al</button>
-                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-success mt-2">Rezervasyon Sil</button>
+                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-success">Rezervasyon Sil</button>
                                     }
 
                                 </p>
