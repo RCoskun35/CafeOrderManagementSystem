@@ -14,6 +14,7 @@
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: confirmButtonText,
+        cancelButtonText:'Vazgeç'
     }).then((result) => {
         if (result.isConfirmed) {
             if (onConfirm && typeof onConfirm === "function") {
