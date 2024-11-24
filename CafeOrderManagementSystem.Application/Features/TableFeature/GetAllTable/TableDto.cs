@@ -12,6 +12,7 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTabl
         public DateTime? DeletedDate { get; set; }
         public bool IsDeleted { get; set; } = false;
         public Order? Order { get; set; }
+        public List<Payment> Payments { get; set; } = new List<Payment>();
 
     }
 }

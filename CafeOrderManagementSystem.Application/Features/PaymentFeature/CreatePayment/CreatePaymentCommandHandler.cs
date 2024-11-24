@@ -16,7 +16,7 @@ namespace CafeOrderManagementSystem.Application.Features.PaymentFeature.CreatePa
             var payment = new Payment
             {
                 OrderId = request.OrderId,
-                Amount = request.Amount,
+                Amount = decimal.Parse(request.Amount.Replace(".", ",")),
                 PaymentMethod = request.PaymentMethod
             };
             await repository.AddAsync(payment, cancellationToken);

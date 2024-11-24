@@ -66,56 +66,88 @@
 <div class="row">
     @foreach (var table in Model)
     {
-        <div class="col-lg-3" onclick="makePayment('@table.TableNumber')">
+        <div class="col-lg-3">
             <div class="card mb-3" style="@(table.State == 0 ? " background-color: lightgreen;" : table.State==1
-        ? "background-color: lightcoral;" : "background-color: peru;" )">
+          ? "background-color: lightcoral;" : "background-color: peru;" )">
 
                 <div class="row g-0">
                     @* <div class="col-md-4" style="padding: 10px;">
-            <img src="assets/img/table.jpg" class="img-fluid rounded-start" alt="...">
-          </div> *@
+              <img src="assets/img/table.jpg" class="img-fluid rounded-start" alt="...">
+            </div> *@
                     <div class="col-md-12">
                         <div class="card-body">
                             <h5 class="card-title">
                                 @table.TableNumber-@(table.State == 0 ? "Boş" : table.State == 1 ? "Dolu" :
                             "Rezerve")
-                                
+
                             </h5>
                             <p class="card-text">
 
                                 @if (table.State == 0)
                                 {
-                                     <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-primary">Sipariş Al</button>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-primary">
+                                            Sipariş
+                                            Al
+                                        </button>
                                         <button onclick="makeReservation('@table.Id', event)" class="btn btn-outline-info">
                                             Rezervasyon Yap
                                         </button>
                                     </div>
 
-
-                                <p class="mt-2">Toplam: 0 TL</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-4">
+                                        <p class="mt-2">Toplam: 0 TL</p>
+                                    </div>
                                 }
 
                                 else @if (table.State == 1)
                                 {
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-outline-success">
-                                        Sipariş Düzenle
+                                            Sipariş Düzenle
                                         </button>
-                                    <button onclick="closedOrder('@(table.Order?.Id ?? 0)',event,@table.Order.OrderDetails.Sum(x => x.UnitPrice * x.Quantity) )" class="btn btn-outline-primary">
-                                        Masayı Kapat
+                                        <button onclick="openPaymentModal(
+                                          '@table.Id',
+                                           '@table.Order.Id',
+                                           '@table.Order.OrderDetails.Sum(x => x.UnitPrice * x.Quantity)',
+                                           '@table.Payments.Sum(a => a.Amount)'
+                                           )" class="btn btn-outline-success">
+                                            Ödeme Al
+                                        </button>
+                                        <button onclick="closedOrder(
+                                        '@(table.Order?.Id ?? 0)',
+                                         event,
+                                         '@table.Order.OrderDetails.Sum(x => x.UnitPrice * x.Quantity)',
+                                        '@table.Payments.Sum(a => a.Amount)'
+                                         )" class="btn btn-outline-primary">
+                                            Masayı Kapat
                                         </button>
                                     </div>
-                                <p class="mt-2">Toplam: @table.Order.OrderDetails.Sum(x => x.UnitPrice * x.Quantity) TL</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-4">
+                                        <p class="mb-0">
+                                            <strong>Toplam:</strong> @table.Order.OrderDetails.Sum(x => x.UnitPrice * x.Quantity)
+                                            TL
+                                        </p>
+                                        <p class="mb-0" style="margin-left:10px"><strong>Ödenen Tutar:</strong> @table.Payments.Sum(a => a.Amount) TL</p>
+                                        <p class="mb-0" style="margin-left:10px">
+                                            <strong>Kalan Tutar:</strong> @((table.Order?.OrderDetails?.Sum(x => x.UnitPrice * x.Quantity) ?? 0)
+                                    - (table.Payments?.Sum(a => a.Amount) ?? 0)) TL
+                                        </p>
+                                    </div>
 
                                 }
                                 else @if (table.State == 2)
                                 {
-                                  <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-primary">Sipariş Al</button>
-                                    <button onclick="deleteReservation('@table.Id', event)" class="btn btn-success">Rezervasyon Sil</button>
-                                </div>
-                                <p class="mt-2">Rezervasyon Tarihi: @table.UpdatedDate.Value</p>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <button onclick="addProductToOrder('@table.Id', event)" class="btn btn-primary">Sipariş Al</button>
+                                        <button onclick="deleteReservation('@table.Id', event)" class="btn btn-success">
+                                            Rezervasyon
+                                            Sil
+                                        </button>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-4">
+                                        <p class="mt-2">Rezervasyon Tarihi: @table.UpdatedDate.Value</p>
+                                    </div>
                                 }
 
                             </p>
@@ -135,14 +167,15 @@
             <div class="modal-header">
                 <ul class="nav nav-tabs" id="productMenuTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="products-tab" data-bs-toggle="tab" data-bs-target="#products-content"
-                                type="button" role="tab" aria-controls="products-content" aria-selected="true">
+                        <button class="nav-link active" id="products-tab" data-bs-toggle="tab"
+                                data-bs-target="#products-content" type="button" role="tab" aria-controls="products-content"
+                                aria-selected="true">
                             Ürünlerden Seç
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="menus-tab" data-bs-toggle="tab" data-bs-target="#menus-content" type="button"
-                                role="tab" aria-controls="menus-content" aria-selected="false">
+                        <button class="nav-link" id="menus-tab" data-bs-toggle="tab" data-bs-target="#menus-content"
+                                type="button" role="tab" aria-controls="menus-content" aria-selected="false">
                             Menülerden Seç
                         </button>
                     </li>
@@ -152,7 +185,8 @@
 
             <div class="modal-body">
                 <div class="tab-content" id="productMenuTabsContent">
-                    <div class="tab-pane fade show active" id="products-content" role="tabpanel" aria-labelledby="products-tab">
+                    <div class="tab-pane fade show active" id="products-content" role="tabpanel"
+                         aria-labelledby="products-tab">
                         <div class="row mb-3">
                             <label for="productQuantity" class="col-sm-2 col-form-label">Ürün Adedi</label>
                             <div class="col-sm-10">
@@ -194,58 +228,79 @@
     <input type="hidden" id="selectedTableId" />
 </div>
 
-
+<div class="modal" tabindex="-1" id="paymentModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ödeme Al</h5>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="paymentTableId" />
+                <input type="hidden" id="paymentOrderId" />
+                <p>Toplam Tutar : <span id="paymentTotalAmount"></span> TL</p>
+                <div class="row mb-3">
+                    <label for="amountPaid" class="col-sm-4 col-form-label">Ödenecek Tutar</label>
+                    <div class="col-sm-8">
+                        <input type="number" id="amountPaid" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="makePayment()" class="btn btn-primary">Ödeme Yap</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
-    function openDiv(tableNumber) {
-      alert("Masa Numarası: " + tableNumber);
-    }
+
     function getPartialView(selectedTableId = 0) {
       $.ajax({
         url: '/Home/HomePartialView',
         type: 'GET',
         success: function (result) {
           $('#partialContainer').html(result);
-            if (selectedTableId > 0) {
-                addProductToOrder(selectedTableId, selectedTableId);
-            }
+          if (selectedTableId > 0) {
+            addProductToOrder(selectedTableId, selectedTableId);
+          }
         }
       });
     }
 
-    function closedOrder(orderId,event,orderAmount, ) {
+    function closedOrder(orderId, event, orderAmount, paidAmount) {
       event.stopPropagation();
-
-      if(orderAmount>0){
-          OnBoxConfirm({
-              title: "Siparişde ödenmemiş miktar var",
-              text: "Toplam tutarın tamamı ödenmeden kapatılsın mı?",
-              confirmButtonText: "Evet!",
-              onConfirm: () => {
-                closeOrderConfirmed(orderId);
-              }
-            });
+      console.log(paidAmount);
+      if (orderAmount != paidAmount) {
+        OnBoxConfirm({
+          title: "Siparişde ödenmemiş miktar var",
+          text: "Toplam tutarın tamamı ödenmeden kapatılsın mı?",
+          confirmButtonText: "Evet!",
+          onConfirm: () => {
+            closeOrderConfirmed(orderId);
+          }
+        });
       }
-      else{
-           closeOrderConfirmed(orderId);
+      else {
+        closeOrderConfirmed(orderId);
       }
 
-     
+
     }
-    function closeOrderConfirmed(orderId){
-        $.ajax({
-           url: '/Order/CloseOrder',
-           type: 'POST',
-           data: { id: orderId },
-           success: function (response) {
+    function closeOrderConfirmed(orderId) {
+      $.ajax({
+        url: '/Order/CloseOrder',
+        type: 'POST',
+        data: { id: orderId },
+        success: function (response) {
 
-             successToast("Masa kapatıldı")
-             getPartialView();
-           },
-           error: function (xhr, status, error) {
-             console.error("Hata oluştu:", error);
-             errorToast(xhr.responseText)
-           }
-         });
+          successToast("Masa kapatıldı")
+          getPartialView();
+        },
+        error: function (xhr, status, error) {
+          console.error("Hata oluştu:", error);
+          errorToast(xhr.responseText)
+        }
+      });
     }
     function deleteReservation(tableId, event) {
       event.stopPropagation();
@@ -293,7 +348,8 @@
 
       } catch (err) {
       }
-      $('#addProductToOrderModal').modal('show');
+      $
+        ('#addProductToOrderModal').modal('show');
 
       orderProducts = [];
       fetchProducts();
@@ -321,7 +377,7 @@
         success: function (response) {
           populateMenuDropdown(response);
           allMenus = response;
-          
+
         },
         error: function (xhr) {
           errorToast(xhr.responseText);
@@ -338,8 +394,8 @@
         const productNames = menu.products.map(product => product.name).join('-');
         dropdown.append(
           `<option value="${menu.id}" title="${menu.name} (${productNames})">
-                      ${menu.name} (${productNames.length > 50 ? productNames.substring(0, 45) + '...' : productNames})
-                  </option>`
+                    ${menu.name} (${productNames.length > 50 ? productNames.substring(0, 45) + '...' : productNames})
+                </option>`
         );
       });
     }
@@ -352,11 +408,11 @@
       products.forEach(product => {
         dropdown.append(
           `<option value="${product.id}"
-                            data-price="${product.price}"
-                            data-quantity="${product.quantity}"
-                            data-menu="${product.menu?.name || ''}">
-                        ${product.name}
-                    </option>`
+                          data-price="${product.price}"
+                          data-quantity="${product.quantity}"
+                          data-menu="${product.menu?.name || ''}">
+                      ${product.name}
+                  </option>`
         );
       });
     }
@@ -366,8 +422,12 @@
         type: 'POST',
         data: { id: tableId },
         success: function (response) {
-          $('#selectedOrderId').val(response.order.id);
-          renderOrderDetails(response.order.orderDetails);
+          if (response.order) {
+            $('#selectedOrderId').val(response.order.id);
+            renderOrderDetails(response.order.orderDetails);
+
+          }
+
         },
         error: function (xhr) {
           errorToast(xhr.responseText);
@@ -395,42 +455,42 @@
     }
     function getOrderHeaderTemplate() {
       return `
-                <div id="product-0" class="product-item">
-                    <div class="row">
-                        <div class="col-3"><p><strong>Ürün Adı</strong></p></div>
-                        <div class="col-3"><p><strong>Menü Adı</strong></p></div>
-                        <div class="col-2"><p><strong>Ürün Adedi</strong></p></div>
-                        <div class="col-2"><p><strong>Birim Fiyatı</strong></p></div>
-                        <div class="col-1"><p><strong>Ara Toplam</strong></p></div>
-                        <div class="col-1"><p><strong>Sil</strong></p></div>
-                    </div>
-                    <hr />
-                </div>`;
+              <div id="product-0" class="product-item">
+                  <div class="row">
+                      <div class="col-3"><p><strong>Ürün Adı</strong></p></div>
+                      <div class="col-3"><p><strong>Menü Adı</strong></p></div>
+                      <div class="col-2"><p><strong>Ürün Adedi</strong></p></div>
+                      <div class="col-2"><p><strong>Birim Fiyatı</strong></p></div>
+                      <div class="col-1"><p><strong>Ara Toplam</strong></p></div>
+                      <div class="col-1"><p><strong>Sil</strong></p></div>
+                  </div>
+                  <hr />
+              </div>`;
     }
     function getOrderDetailTemplate(detail) {
-        
+
       return `
-                <div id="product-${detail.product.id}" class="product-item">
-                    <div class="row">
-                        <div class="col-3"><p>${detail.product.name}</p></div>
-                        <div class="col-3"><p>${detail.menu?.name || ''}</p></div>
-                        <div class="col-2"><p>${detail.quantity}</p></div>
-                        <div class="col-2"><p>${detail.unitPrice}</p></div>
-                        <div class="col-1"><p>${detail.quantity * detail.unitPrice}</p></div>
-                        <div class="col-1"><button class="btn btn-warning" onclick="removeOrderDetail(${detail.id})">Sil</button></div>
-                    </div>
-                    <hr />
-                </div>`;
+              <div id="product-${detail.product.id}" class="product-item">
+                  <div class="row">
+                      <div class="col-3"><p>${detail.product.name}</p></div>
+                      <div class="col-3"><p>${detail.menu?.name || ''}</p></div>
+                      <div class="col-2"><p>${detail.quantity}</p></div>
+                      <div class="col-2"><p>${detail.unitPrice}</p></div>
+                      <div class="col-1"><p>${detail.quantity * detail.unitPrice}</p></div>
+                      <div class="col-1"><button class="btn btn-warning" onclick="removeOrderDetail(${detail.id})">Sil</button></div>
+                  </div>
+                  <hr />
+              </div>`;
     }
     function getOrderSummaryTemplate(totalPrice) {
       return `
-                <div id="product-summary" class="product-item">
-                    <div class="row">
-                        <div class="col-10"><p><strong>Toplam Tutar:</strong></p></div>
-                        <div class="col-2"><p><strong>${totalPrice}</strong></p></div>
-                    </div>
-                    <hr />
-                </div>`;
+              <div id="product-summary" class="product-item">
+                  <div class="row">
+                      <div class="col-10"><p><strong>Toplam Tutar:</strong></p></div>
+                      <div class="col-2"><p><strong>${totalPrice}</strong></p></div>
+                  </div>
+                  <hr />
+              </div>`;
     }
 
 
@@ -523,15 +583,15 @@
       orderProducts.forEach(product => {
         totalPrice += product.price * product.quantity;
         productContainer.append(`
-                    <div id="product-${product.id}" class="product-item">
-                        <div class="row">
-                            <div class="col-4"><p>${product.name}</p></div>
-                            <div class="col-4"><p>${product.menu || ''}</p></div>
-                            <div class="col-2"><p>${product.quantity}</p></div>
-                            <div class="col-2"><p>${product.price}</p></div>
-                        </div>
-                        <hr />
-                    </div>`);
+                  <div id="product-${product.id}" class="product-item">
+                      <div class="row">
+                          <div class="col-4"><p>${product.name}</p></div>
+                          <div class="col-4"><p>${product.menu || ''}</p></div>
+                          <div class="col-2"><p>${product.quantity}</p></div>
+                          <div class="col-2"><p>${product.price}</p></div>
+                      </div>
+                      <hr />
+                  </div>`);
       });
 
       productContainer.append(getOrderSummaryTemplate(totalPrice));
@@ -541,17 +601,41 @@
       const requestData = {
         id: tableId
       };
-      
+
     }
-    function removeOrderDetail(id){
-        $.ajax({
+    function removeOrderDetail(id) {
+      $.ajax({
         url: '/Order/RemoveOrderDetail',
         type: 'POST',
-        data:{id:id},
+        data: { id: id },
         success: function (result) {
-            $('#addProductToOrderModal').modal('hide');
+          $('#addProductToOrderModal').modal('hide');
           getPartialView($('#selectedTableId').val());
-            
+
+        }
+      });
+    }
+
+    function openPaymentModal(tableId, orderId, totalAmount, paidAmount) {
+      var remainingAmount = parseFloat(totalAmount.replace(',', '.')) - parseFloat(paidAmount.replace(',', '.'));
+      $('#paymentTableId').val(tableId)
+      $('#paymentOrderId').val(orderId)
+      $('#paymentModal').modal('show');
+      $('#paymentTotalAmount').text(totalAmount);
+      $('#amountPaid').val(remainingAmount);
+    }
+    function makePayment() {
+      var amountPaid = $('#amountPaid').val();
+      var tableId = $('#paymentTableId').val();
+      var orderId = $('#paymentOrderId').val();
+      $.ajax({
+        url: '/Payment/Create',
+        type: 'POST',
+        data: { orderId: orderId, amount: amountPaid, paymentMethod: 'Nakit' },
+        success: function (result) {
+          successToast("Ödeme Başarıyla Gerçekleştirildi");
+          $('#paymentModal').modal('hide');
+          getPartialView()
         }
       });
     }

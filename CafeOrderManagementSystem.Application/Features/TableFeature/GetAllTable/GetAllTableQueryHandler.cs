@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTable
 {
-    public class GetAllTableQueryHandler(IRepository<Table> repository,IRepository<Order> orderRepository) : IRequestHandler<GetAllTableQuery, List<TableDto>>
+    public class GetAllTableQueryHandler(IRepository<Table> repository,IRepository<Order> orderRepository,IRepository<Payment> paymentRepository) : IRequestHandler<GetAllTableQuery, List<TableDto>>
     {
         public async Task<List<TableDto>> Handle(GetAllTableQuery request, CancellationToken cancellationToken)
         {
@@ -19,6 +19,10 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTabl
 
                 orders.ForEach(x => x.TotalAmount = x.OrderDetails.Sum(a => a.Quantity * a.UnitPrice));
 
+            var orderIds = orders.Select(x => x.Id).ToList();
+
+            var payments = await paymentRepository.WhereWithTracking(x => !x.IsDeleted && orderIds.Contains(x.OrderId))
+                                         .ToListAsync(cancellationToken);
 
             var tables = await repository.WhereWithTracking(x => !x.IsDeleted)
                                          .ToListAsync(cancellationToken);
@@ -33,7 +37,9 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.GetAllTabl
                 DeletedDate = x.DeletedDate,
                 IsDeleted = x.IsDeleted,
                 Order = orders.FirstOrDefault(a => a.TableId == x.Id),
-
+                Payments = orders.FirstOrDefault(a => a.TableId == x.Id) != null
+               ? payments.Where(t => t.OrderId == orders.FirstOrDefault(a => a.TableId == x.Id).Id).ToList()
+               : default
             }).OrderBy(a=>a.CreatedDate).ToList();
 
             return result;
