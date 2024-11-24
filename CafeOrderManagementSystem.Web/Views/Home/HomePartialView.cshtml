@@ -271,7 +271,9 @@
         type: 'GET',
         success: function (result) {
           $('#partialContainer').html(result);
+          
           if (selectedTableId > 0) {
+            
             addProductToOrder(selectedTableId, selectedTableId);
           }
         }
@@ -429,14 +431,17 @@
         type: 'POST',
         data: { id: tableId },
         success: function (response) {
-          if (response.order) {
-            $('#selectedOrderId').val(response.order.id);
-            renderOrderDetails(response.order.orderDetails);
-          }
-          else{
-        const productContainer = $('#allProduct');
-         productContainer.empty();
-          }
+            if(response.order){
+                $('#selectedOrderId').val(response.order.id);
+                 renderOrderDetails(response.order.orderDetails);
+            }
+            else{
+                $('#selectedOrderId').val(0);
+                 const productContainer = $('#allProduct');
+                productContainer.empty();
+                   productContainer.append(getOrderSummaryTemplate(0));
+            }
+             
 
         },
         error: function (xhr) {

@@ -21,7 +21,7 @@ namespace CafeOrderManagementSystem.Application.Features.OrderFeature.AddOrderDe
             var products = await productRepository.Where(x => productIds.Contains(x.Id)).ToListAsync(cancellationToken);
 
             var order = await repository.GetByExpressionAsync(x=>x.Id==request.Id,cancellationToken);
-            if (order == null)
+            if (order == null )
             {
                  order = new Order
                 {

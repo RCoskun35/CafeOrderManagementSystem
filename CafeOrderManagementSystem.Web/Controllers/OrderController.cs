@@ -4,8 +4,10 @@ using CafeOrderManagementSystem.Application.Features.OrderFeature.CreateOrder;
 using CafeOrderManagementSystem.Application.Features.OrderFeature.GetAllOrder;
 using CafeOrderManagementSystem.Application.Features.OrderFeature.GetOrderById;
 using CafeOrderManagementSystem.Application.Features.OrderFeature.RemoveOrderDetail;
+using CafeOrderManagementSystem.Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace CafeOrderManagementSystem.Web.Controllers
 {
@@ -36,7 +38,7 @@ namespace CafeOrderManagementSystem.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddOrderDetail(AddOrderDetailCommand request, CancellationToken cancellationToken)
         {
-          
+            LogService.Log(JsonSerializer.Serialize(request), "", 0);
             return await HandleRequestAsync(request, cancellationToken);
         }
 
