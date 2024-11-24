@@ -356,8 +356,7 @@
 
       } catch (err) {
       }
-      $
-        ('#addProductToOrderModal').modal('show');
+      $('#addProductToOrderModal').modal('show');
 
       orderProducts = [];
       fetchProducts();
@@ -433,7 +432,10 @@
           if (response.order) {
             $('#selectedOrderId').val(response.order.id);
             renderOrderDetails(response.order.orderDetails);
-
+          }
+          else{
+        const productContainer = $('#allProduct');
+         productContainer.empty();
           }
 
         },
