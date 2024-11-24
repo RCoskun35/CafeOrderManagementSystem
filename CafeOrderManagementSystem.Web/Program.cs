@@ -34,7 +34,7 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 }); ; 
 
 var app = builder.Build();
-
+app.UseMiddleware<ExceptionHandler>();
 var httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 var serviceProvider = app.Services;
 LogService.Initialize(serviceProvider, httpContextAccessor);

@@ -12,6 +12,7 @@ namespace CafeOrderManagementSystem.Application.Features.MenuFeature.CreateMenu
     {
         public async Task<string> Handle(CreateMenuCommand request, CancellationToken cancellationToken)
         {
+           
             var isExistMenu = await repository.GetByExpressionWithTrackingAsync(x => x.Name == request.Name, cancellationToken);
             if (isExistMenu != null)
                 throw new Exception("Menü zaten mevcut");

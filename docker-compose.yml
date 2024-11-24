@@ -1,0 +1,6 @@
+services:
+  cafeordermanagementsystem.web:
+    image: ${DOCKER_REGISTRY-}cafeordermanagementsystemweb
+    build:
+      context: .
+      dockerfile: CafeOrderManagementSystem.Web/Dockerfile
