@@ -12,13 +12,13 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.UpdateTabl
         {
             var table = await repository.GetByExpressionAsync(x => x.Id == request.Id);
             if (table == null)
-                throw new Exception("Table not found");
+                throw new Exception("Masa bulunamadı");
 
             table.TableNumber = request.TableNumber;
             table.UpdatedDate = DateTime.Now;
             repository.Update(table);
             await unitOfWork.SaveChangesAsync();
-            return "Table updated successfully";
+            return "Masa güncelleme başarılı";
         }
     }
 }

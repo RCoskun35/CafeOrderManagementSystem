@@ -14,10 +14,10 @@ namespace CafeOrderManagementSystem.Application.MenuProductFeature.DeleteMenuPro
         {
             var menuProduct = await repository.GetByExpressionWithTrackingAsync(x=>x.MenuId == request.MenuId && x.ProductId==request.ProductId, cancellationToken);
             if (menuProduct == null)
-                throw new Exception("MenuProduct not found");
+                throw new Exception("Menü Ürün eşleştirmesi bulunamadı");
             repository.Delete(menuProduct);
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            return "MenuProduct deleted successfully";
+            return "Menü ürün eşleştirmesi başarıyla silindi";
         }
     }
 

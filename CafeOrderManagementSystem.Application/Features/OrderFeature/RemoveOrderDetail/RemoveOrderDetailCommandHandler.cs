@@ -18,7 +18,7 @@ namespace CafeOrderManagementSystem.Application.Features.OrderFeature.AddOrderDe
             var orderDetail = await orderDetailRepository.GetByExpressionAsync(x=>x.Id==request.Id,cancellationToken);
                  orderDetailRepository.Delete(orderDetail);
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            return "Order is updated successfully";
+            return "Sipariş başarıyla güncellendi";
 
         }
     }

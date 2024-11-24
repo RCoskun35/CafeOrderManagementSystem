@@ -21,7 +21,7 @@ namespace CafeOrderManagementSystem.Application.Features.PaymentFeature.CreatePa
             };
             await repository.AddAsync(payment, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            return "Payment created successfully.";
+            return "Ödeme başarıyla gerçekleştirildi.";
         }
     }
 }

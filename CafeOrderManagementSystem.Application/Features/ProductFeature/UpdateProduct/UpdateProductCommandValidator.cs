@@ -8,7 +8,7 @@ namespace CafeOrderManagementSystem.Application.Features.ProductFeature.UpdatePr
         {
             RuleFor(p => p.Name)
                 .MinimumLength(3)
-                .WithMessage("Product name must be at least 3 characters");
+                .WithMessage("Ürün adı 3 karakterden az olamaz");
 
         }
     }

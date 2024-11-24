@@ -14,13 +14,13 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.DeleteTabl
         {
             var table =await repository.GetByExpressionWithTrackingAsync(x=>x.Id == request.Id);
             if (table == null)
-                throw new Exception("Table not found");
+                throw new Exception("Masa bulunamadı");
 
             table.IsDeleted = true;
             table.DeletedDate = DateTime.Now;
             repository.Update(table);
             await unitOfWork.SaveChangesAsync();
-            return "Table deleted successfully";
+            return "Masa silme işlemi başarılı";
         }
     }
 

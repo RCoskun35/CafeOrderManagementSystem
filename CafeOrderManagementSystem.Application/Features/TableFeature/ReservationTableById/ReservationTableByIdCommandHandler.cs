@@ -10,16 +10,16 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.Reservatio
         {
             var table =  await repository.GetByExpressionWithTrackingAsync(x => x.Id == request.Id,cancellationToken);
             if (table == null)
-                throw new Exception("Table not found");
+                throw new Exception("Masa bulunamadı");
 
             if (table.State == 2)
-                throw new Exception("Table is already reserved");
+                throw new Exception("Masa zaten rezerve edilmiş");
 
             table.State = 2;
             table.UpdatedDate = DateTime.Now;
             repository.Update(table);
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            return "Table is reserved successfully";
+            return "Rezervasyon başarılı";
         }
     }
 

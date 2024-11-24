@@ -14,13 +14,13 @@ namespace CafeOrderManagementSystem.Application.Features.ProductFeature.DeletePr
         {
             var product =await repository.GetByExpressionWithTrackingAsync(x=>x.Id == request.Id);
             if (product == null)
-                throw new Exception("Product not found");
+                throw new Exception("Ürün bulunamadı");
 
             product.IsDeleted = true;
             product.DeletedDate = DateTime.Now;
             repository.Update(product);
             await unitOfWork.SaveChangesAsync();
-            return "Product deleted successfully";
+            return "Ürün silme başarılı";
         }
     }
 

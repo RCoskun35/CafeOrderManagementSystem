@@ -21,10 +21,10 @@ namespace CafeOrderManagementSystem.Application.Features.UserFeature.Login
         {
             User? user = await repository.GetByExpressionAsync(x => x.Email == request.Email);
             if (user == null)
-                throw new Exception("User not found");
+                throw new Exception("Kullanıcı bulunamadı");
 
             if (HashService.Decrypt(user.Password)!= request.Password)
-                throw new Exception("Invalid password");
+                throw new Exception("Parolalar uyuşmuyor");
 
 
             var claims = new List<Claim>

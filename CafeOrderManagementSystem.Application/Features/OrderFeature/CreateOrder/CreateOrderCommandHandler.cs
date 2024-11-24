@@ -45,7 +45,7 @@ namespace CafeOrderManagementSystem.Application.Features.OrderFeature.CreateOrde
             await orderDetailRepository.AddRangeAsync(orderDetails, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return "Order is created successfully";
+            return "Sipariş başarıyla oluşturuldu";
             
         }
     }

@@ -15,7 +15,7 @@ namespace CafeOrderManagementSystem.Application.Features.ProductFeature.CreatePr
         {
             var isExistProduct = await repository.GetByExpressionWithTrackingAsync(x => x.Name == request.Name);
             if (isExistProduct != null)
-                throw new Exception("Product already exist");
+                throw new Exception("Ürün zaten var");
             var product = new Product
             {
                 Name = request.Name,

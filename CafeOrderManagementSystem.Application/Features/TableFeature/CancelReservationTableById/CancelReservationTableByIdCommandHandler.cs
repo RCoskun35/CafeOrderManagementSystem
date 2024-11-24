@@ -10,15 +10,15 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.CancelRese
         {
             var table =  await repository.GetByExpressionWithTrackingAsync(x => x.Id == request.Id,cancellationToken);
             if (table == null)
-                throw new Exception("Table not found");
+                throw new Exception("Masa bulunamadı");
 
             if (table.State != 2)
-                throw new Exception("Table is not reserved");
+                throw new Exception("Masa rezerve değil iptal edilemez");
 
             table.State = 0;
             repository.Update(table);
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            return "The table reservation has been successfully canceled.";
+            return "Masa rezervasyonu iptal işlemi başarılı";
         }
     }
 

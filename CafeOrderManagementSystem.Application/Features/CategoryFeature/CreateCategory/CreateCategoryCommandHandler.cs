@@ -15,7 +15,7 @@ namespace CafeOrderManagementSystem.Application.Features.CategoryFeature.CreateC
         {
             var isExistCategory = await repository.GetByExpressionWithTrackingAsync(x => x.Name == request.Name);
             if (isExistCategory != null)
-                throw new Exception("Category already exist");
+                throw new Exception("Kategori zaten mevcut");
             var category = mapper.Map<Category>(request);
             await repository.AddAsync(category,cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);

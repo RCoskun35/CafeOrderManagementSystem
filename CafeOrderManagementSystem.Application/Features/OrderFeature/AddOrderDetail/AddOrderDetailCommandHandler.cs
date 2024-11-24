@@ -51,7 +51,7 @@ namespace CafeOrderManagementSystem.Application.Features.OrderFeature.AddOrderDe
            
             repository.Update(order);
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            return "Order is updated successfully";
+            return "Sipariş başarıyla güncellendi";
 
         }
     }

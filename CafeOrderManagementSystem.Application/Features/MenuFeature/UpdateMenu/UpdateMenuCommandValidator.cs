@@ -8,7 +8,7 @@ namespace CafeOrderManagementSystem.Application.Features.MenuFeature.UpdateMenu
         {
             RuleFor(p => p.Name)
                 .MinimumLength(3)
-                .WithMessage("Menu name must be at least 3 characters");
+                .WithMessage("Menü adı 3 karakterden az olamaz");
 
         }
     }

@@ -15,7 +15,7 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.CreateTabl
         {
             var isExistTable = await repository.GetByExpressionWithTrackingAsync(x => x.TableNumber == request.TableNumber);
             if (isExistTable != null)
-                throw new Exception("Table already exist");
+                throw new Exception("Masa zaten mevcut");
             var table = mapper.Map<Table>(request);
             table.State = 0;
             await repository.AddAsync(table);

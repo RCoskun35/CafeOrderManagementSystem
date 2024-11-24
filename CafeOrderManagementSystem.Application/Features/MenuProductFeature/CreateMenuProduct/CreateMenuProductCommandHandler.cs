@@ -14,7 +14,7 @@ namespace CafeOrderManagementSystem.Application.Features.MenuProductFeature.Crea
         {
             var isExistmenuProduct = await repository.GetByExpressionWithTrackingAsync(x => x.MenuId == request.MenuId && x.ProductId == request.ProductId, cancellationToken);
             if (isExistmenuProduct != null)
-                throw new Exception("Menu-Product already exist");
+                throw new Exception("Menü Ürün ilişkisi zaten mevcut");
             var menuProduct = new MenuProduct
             {
                 MenuId = request.MenuId,
@@ -22,7 +22,7 @@ namespace CafeOrderManagementSystem.Application.Features.MenuProductFeature.Crea
             };
             await repository.AddAsync(menuProduct, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            return "Menu-Product added successfully";
+            return "Menü-Ürün eşleştirmesi yapıldı";
         }
     }
 }

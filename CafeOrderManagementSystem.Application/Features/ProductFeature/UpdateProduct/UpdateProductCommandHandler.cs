@@ -12,7 +12,7 @@ namespace CafeOrderManagementSystem.Application.Features.ProductFeature.UpdatePr
         {
             var product = await repository.GetByExpressionAsync(x => x.Id == request.Id);
             if (product == null)
-                throw new Exception("Product not found");
+                throw new Exception("Ürün bulunamadı");
 
             product.Name = request.Name;
             product.Description = request.Description;
@@ -21,7 +21,7 @@ namespace CafeOrderManagementSystem.Application.Features.ProductFeature.UpdatePr
             product.UpdatedDate = DateTime.Now;
             repository.Update(product);
             await unitOfWork.SaveChangesAsync();
-            return "Product updated successfully";
+            return "Ürün başarıyla güncellendi";
         }
     }
 }

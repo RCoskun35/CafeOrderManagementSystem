@@ -29,7 +29,7 @@ function successToast(message) {
 function errorToast(message) {
     showToast('İşlem Hatalı:'+message, 'error');
 }
-function showToast(message = "Bu bir mesajdır!", type = "info") {
+function showToast(message = "", type = "info") {
     const backgroundColors = {
         error: "#f44336", 
         info: "#2196f3",  

@@ -8,7 +8,7 @@ namespace CafeOrderManagementSystem.Application.Features.TableFeature.CreateTabl
         {
             RuleFor(p => p.TableNumber)
                 .MinimumLength(1)
-                .WithMessage("Table number must be at least 1 characters");
+                .WithMessage("Masa numarası zorunlu");
 
         }
     }

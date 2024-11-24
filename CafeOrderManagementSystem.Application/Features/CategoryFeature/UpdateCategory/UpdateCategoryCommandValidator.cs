@@ -8,7 +8,7 @@ namespace CafeOrderManagementSystem.Application.Features.CategoryFeature.UpdateC
         {
             RuleFor(p => p.Name)
                 .MinimumLength(3)
-                .WithMessage("Category name must be at least 3 characters");
+                .WithMessage("Kategori adı en az 3 karakter olmalıdır");
 
         }
     }

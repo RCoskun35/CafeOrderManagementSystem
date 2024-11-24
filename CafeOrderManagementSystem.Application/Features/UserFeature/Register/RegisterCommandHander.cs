@@ -13,11 +13,11 @@ namespace CafeOrderManagementSystem.Application.Features.UserFeature.Register
         public async Task<string> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
             if(request.Password != request.RePassword)
-                throw new Exception("Password and RePassword does not match");
+                throw new Exception("Parolalar eşleşmiyor");
 
             var isExistUser = await repository.GetByExpressionWithTrackingAsync(x => x.Email == request.Email);
             if (isExistUser != null)
-                throw new Exception("User already exist");
+                throw new Exception("Kullanıcı mevcut");
             var user = new User
             {
                 Email = request.Email,
@@ -29,7 +29,7 @@ namespace CafeOrderManagementSystem.Application.Features.UserFeature.Register
             await repository.AddAsync(user);
             await unitOfWork.SaveChangesAsync();
 
-            return "User registered successfully";
+            return "Kullanıcı başarıyla oluşturuldu";
         }
     }
 }

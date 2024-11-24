@@ -14,13 +14,13 @@ namespace CafeOrderManagementSystem.Application.Features.CategoryFeature.DeleteC
         {
             var category =await repository.GetByExpressionWithTrackingAsync(x=>x.Id == request.Id, cancellationToken);
             if (category == null)
-                throw new Exception("Category not found");
+                throw new Exception("Kategori bulunamadı");
 
             category.IsDeleted = true;
             category.DeletedDate = DateTime.Now;
             repository.Update(category);
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            return "Category deleted successfully";
+            return "Kategori başarıyla silindi";
         }
     }
 

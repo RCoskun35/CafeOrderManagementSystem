@@ -14,7 +14,7 @@ namespace CafeOrderManagementSystem.Application.Features.MenuFeature.CreateMenu
         {
             var isExistMenu = await repository.GetByExpressionWithTrackingAsync(x => x.Name == request.Name, cancellationToken);
             if (isExistMenu != null)
-                throw new Exception("Menu already exist");
+                throw new Exception("Menü zaten mevcut");
             var menu = mapper.Map<Domain.Entities.Menu>(request);
             await repository.AddAsync(menu, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
