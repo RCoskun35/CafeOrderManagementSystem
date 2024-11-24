@@ -4,6 +4,11 @@
 @{
     Layout = null;
     var dailyCount = (ViewBag.DailyOrders as List<Order>).Count();
+    var dailyPayment = (ViewBag.DailyPayments as List<Payment>)?.Sum(x => x.Amount) ?? 0;
+    var openTable = Model.Where(a => a.State == 0).Count();
+    var closedTable = Model.Where(a => a.State == 1).Count();
+    var reservedTalbe = Model.Where(a => a.State == 2).Count();
+
 }
 <style>
     #addProductToOrderModal .modal-body > div {
@@ -27,35 +32,47 @@
 <div class="col-12">
     <div class="row">
         <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-header bg-primary text-white">
-                    Günlük Sipariş Sayısı
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-primary  py-3">
+                    <h4 class="mb-0"><i class="fas fa-shopping-cart"></i> Günlük Sipariş Sayısı</h4>
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title" id="dailyOrderCount">@dailyCount </h5>
-                    <p class="card-text">Bugün alınan toplam sipariş sayısı</p>
+                    <h5 class="card-title text-primary fw-bold" id="dailyOrderCount">@dailyCount</h5>
+                    <p class="card-text text-muted">Bugün alınan toplam sipariş sayısı</p>
+                </div>
+                <div class="card-footer bg-light">
+                    <span class="text-info"><i class="fas fa-chart-line"></i> Siparişleri yakından izleyin.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-success py-3">
+                    <h4 class="mb-0"><i class="fas fa-coins"></i> Günlük Hasılat</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-success fw-bold" id="dailyRevenue">@dailyPayment TL</h5>
+                    <p class="card-text text-muted">Bugünkü toplam hasılat</p>
+                </div>
+                <div class="card-footer bg-light">
+                    <span class="text-primary"><i class="fas fa-calendar-day"></i> Güncel durumu takip edin.</span>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-header bg-success text-white">
-                    Günlük Hasılat
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-info py-3">
+                    <h4 class="mb-0"><i class="fas fa-table"></i> Masa Özet Bilgileri</h4>
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title" id="dailyRevenue">0 ₺</h5>
-                    <p class="card-text">Bugünkü toplam hasılat.</p>
+                    <h5 class="card-title text-primary fw-bold" id="tableSummary">@openTable / @closedTable / @reservedTalbe</h5>
+                    <p class="card-text text-muted">Uygun Masa / Dolu Masa / Rezerve Masa</p>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-header bg-info text-white">
-                    Masa Özet Bilgileri
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title" id="tableSummary">0/10</h5>
-                    <p class="card-text">Kullanılan ve toplam masa sayısı.</p>
+                <div class="card-footer bg-light d-flex justify-content-around">
+                    <span class="text-success"><i class="fas fa-check-circle"></i> Açık: @openTable</span>
+                    <span class="text-danger"><i class="fas fa-times-circle"></i> Kapalı: @closedTable</span>
+                    <span class="text-warning"><i class="fas fa-bookmark"></i> Rezerve: @reservedTalbe</span>
                 </div>
             </div>
         </div>
